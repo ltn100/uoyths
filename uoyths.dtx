@@ -1,0 +1,3067 @@
+%^^A------------------------------------------------------------
+%^^A-               Standard Licence Spiel                     -
+%^^A------------------------------------------------------------
+% \iffalse meta-comment
+%
+% Copyright (C) 2005 by Lee Netherton <ltn100@ohm.york.ac.uk>
+% --------------------------------------------------------------
+%
+% This file may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.2
+% of this license or (at your option) any later version.
+% The latest version of this license is in:
+%
+%    http://www.latex-project.org/lppl.txt
+%
+% and version 1.2 or later is part of all distributions of LaTeX
+% version 1999/12/01 or later.
+%
+% \fi
+%
+% \iffalse
+%
+%^^A------------------------------------------------------------
+%^^A-               File Information                           -
+%^^A------------------------------------------------------------
+%<*driver|class>
+\def\datelastmodified/{2005/03/15}%
+\def\versionnumber/{v0.1}%
+\def\filedescription/{Thesis Class to University of York Specifications}%
+%</driver|class>%
+%
+%^^A------------------------------------------------------------
+%^^A-               Identification                             -
+%^^A------------------------------------------------------------
+%<class>\NeedsTeXFormat{LaTeX2e}[1999/12/01]%
+%<class>\ProvidesClass{uoyths}[\datelastmodified/ \versionnumber/ \filedescription/]%
+%
+%^^A------------------------------------------------------------
+%^^A-               Set-up Doc driver                          -
+%^^A------------------------------------------------------------
+%<*driver>
+\ProvidesFile{uoyths.dtx}[\datelastmodified/ \versionnumber/ \filedescription/]%
+\documentclass{ltxdoc}%
+\EnableCrossrefs%
+\CodelineIndex%
+\RecordChanges%
+\begin{document}%
+  \DocInput{uoyths.dtx}%
+\end{document}%
+%</driver>
+% \fi
+%
+% \CheckSum{0}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+%
+% \changes{v1.0}{2005/03/15}{Initial version}
+%
+% \GetFileInfo{uoyths.dtx}
+%
+% \DoNotIndex{\newcommand,\newenvironment,\relax,\end,\begin}
+%
+%
+% \title{The \textsf{uoyths} class\thanks{This document
+%   corresponds to \textsf{uoyths}~\fileversion, dated \filedate.}\vspace{2mm}\\
+%   \small(\fileinfo)}
+% \author{Lee Netherton \\ \texttt{ltn100@ohm.york.ac.uk}}
+%
+% \maketitle
+%
+%^^A************************************************************
+%^^A*               Introduction                               *
+%^^A************************************************************
+% \section{Introduction}
+%   \label{sec:intro}
+%
+%   This thesis class adheres to the University of York these regulations
+%   and, in addition, will provide the following functionality:
+%
+%   \begin{itemize}
+%       \item Nomenclature support
+%       \item Acronym support
+%       \item Glossary support
+%       \item A |minitoc| at the start of each chapter
+%       \item A |bibunits| section at the end of each chapter
+%       \item Support for many bibliography styles with |natbib|
+%       \item Chapter and section \emph{environments}
+%       \item A full bibliography at the end in addition to the |bibunits|
+%       %\item Support for |hyperref|
+%   \end{itemize}
+%
+%
+%^^A************************************************************
+%^^A*               Implementation                             *
+%^^A************************************************************
+% \iffalse
+%<*class>
+% \fi
+% \StopEventually{\PrintChanges\PrintIndex}
+%
+% \section{Implementation}
+%   \label{sec:implementation}
+%
+%^^A------------------------------------------------------------
+%^^A-               Initial Code                               -
+%^^A------------------------------------------------------------
+%
+%    \begin{macrocode}
+\hbadness=10000% Suppress hbox warnings
+\RequirePackage{ifthen}%
+%    \end{macrocode}
+%
+%^^A------------------------------------------------------------
+%^^A-               Declaration of Options                     -
+%^^A------------------------------------------------------------
+%   \subsection{Parent Class and Options}
+%       \label{subsec:parent}
+%       We shall pass the report class the font size option.
+%    \begin{macrocode}
+\DeclareOption{10pt}{\PassOptionsToClass{\CurrentOption}{report}}%
+\DeclareOption{11pt}{\PassOptionsToClass{\CurrentOption}{report}}%
+\DeclareOption{12pt}{\PassOptionsToClass{\CurrentOption}{report}}%
+\DeclareOption{bibunits}{}%
+\DeclareOption{nobibunits}{}%
+\DeclareOption{minitocs}{}%
+\DeclareOption{nominitocs}{}%
+%\DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}}%
+%    \end{macrocode}
+%^^A------------------------------------------------------------
+%^^A-               Execution of Options                       -
+%^^A------------------------------------------------------------
+%    \begin{macrocode}
+\ProcessOptions\relax%
+%    \end{macrocode}
+%^^A------------------------------------------------------------
+%^^A-               Package Loading                            -
+%^^A------------------------------------------------------------
+%       We can then load the class as the parent.
+%    \begin{macrocode}
+\LoadClass[11pt,a4paper,dvips]{report}%
+%    \end{macrocode}
+%       We will require some packages to provide the functionality set
+%       out in chapter \ref{sec:intro}.
+%    \begin{macrocode}
+\RequirePackage{minitoc}%
+\RequirePackage{natbib}%
+\RequirePackage[globalcitecopy,sectionbib]{bibunits}%
+\RequirePackage{acronym}% must be above glossary (for some reason!)
+\RequirePackage[style=long,number=none,toc=true]{glossary}% also requires package 'supertabular'
+\RequirePackage{chapterEnv}%
+\RequirePackage[notintoc]{nomencl}%
+\RequirePackage{setspace}%
+\RequirePackage{fancyhdr}% fancyhdr - fancy page headings
+\RequirePackage{epsfig}% Allow rendering of the logo from eps
+\RequirePackage{xkeyval}% Allows for key/value options for commands and environments
+%    \end{macrocode}
+%
+%^^A------------------------------------------------------------
+%^^A-               Main Code                                  -
+%^^A------------------------------------------------------------
+%   \subsection{Variables}
+%       \label{subsec:vars}
+%       Here we will define some variables that will help us set up our class.
+%       \begin{macro}{\cite@style}
+%       Firstly, a variable containing the bibliography style to be used. It is
+%       initially set to |agsm|, the Harvard citation style.
+%    \begin{macrocode}
+%\IfFileExists{thesis.bst}{%
+%    \def\cite@style{uoyths}%
+%}{%
+    \def\cite@style{agsm}%
+%}%
+%    \end{macrocode}
+%       \end{macro}
+%       \begin{macro}{\bib@file}
+%       Now for a variable containing the location of the bibliography file.
+%    \begin{macrocode}
+\def\bib@file{}%
+%    \end{macrocode}
+%       \end{macro}
+%       \begin{macro}{\caption@size}
+%       Variable for the caption font size.
+%    \begin{macrocode}
+\def\caption@size{\footnotesize}%
+%    \end{macrocode}
+%       \end{macro}
+%       \begin{macro}{\caption@size}
+%       Variable for the caption font size.
+%    \begin{macrocode}
+\def\mtc@indent{24pt}%
+%    \end{macrocode}
+%       \end{macro}
+%
+%   \subsection{Defining Variables}
+%       \label{subsec:definevars}
+%       To define the variables in section \ref{subsec:vars} we supply some
+%       commands.
+%       \begin{macro}{\SetCitationStyle}
+%       To set the style of the references in the document we use |\SetCitationStyle|
+%    \begin{macrocode}
+\newcommand{\SetCitationStyle}[1]{\def\cite@style{#1}}%
+%    \end{macrocode}
+%       \end{macro}
+%       \begin{macro}{\SetBibliographyFile}
+%       To set the name and location of bibliography file we use |\SetBibliographyFile|
+%    \begin{macrocode}
+\newcommand{\SetBibliographyFile}[1]{\def\bib@file{#1}}%
+%    \end{macrocode}
+%       \end{macro}
+%       \begin{macro}{\SetBibliographyFile}
+%       To set the name and location of bibliography file we use |\SetBibliographyFile|
+%    \begin{macrocode}
+\newcommand{\SetCaptionSize}[1]{\def\caption@size{#1}}%
+%    \end{macrocode}
+%       \end{macro}
+%       \begin{macro}{\SetBibliographyFile}
+%       To set the name and location of bibliography file we use |\SetBibliographyFile|
+%    \begin{macrocode}
+\newcommand{\SetMtcIndent}[1]{\def\mtc@indent{#1}}%
+%    \end{macrocode}
+%       \end{macro}
+%
+%   \subsection{Configuring Packages}
+%       \label{subsec:config}
+%       \begin{macro}{\SetupPackages}
+%       The configuring of the packages will be done by the command |\SetupPackages|
+%    \begin{macrocode}
+\newcommand{\SetupPackages}%
+{%
+%    \end{macrocode}
+%       \end{macro}
+%^^A------------------------------------------------------------
+%^^A-             Set-up natbib                              -
+%^^A------------------------------------------------------------
+%       \subsubsection{Configure \texttt{natbib}}
+%           \label{subsubsec:natbib}
+%           We shall set up |natbib| to use the citation style selected.
+%    \begin{macrocode}
+    \citestyle{\cite@style}%
+    \bibpunct
+        {(} % Left parenthesis
+        {)} % Right parenthesis
+        {;} % Punctuation between multiple citations
+        {a} % Author-year style
+        {,} % Punctuation between author names and year
+        {,~}% Punctuation between multiple citations with a common author
+%    \end{macrocode}
+%
+%^^A------------------------------------------------------------
+%^^A-             Set-up bibunits                              -
+%^^A------------------------------------------------------------
+%       \subsubsection{Configure \texttt{bibunits}}
+%           \label{subsubsec:bibunits}
+%           The |bibunits| will provide a section level bibliography
+%           at the end of every chapter. To allow the bib-section to
+%           be numbered, the starring (non-numbering) of sections
+%           is inhibited, as the normal |\putbib| command uses the
+%           starred form.
+%    \begin{macrocode}
+    \defaultbibliography{\bib@file}
+    \defaultbibliographystyle{\cite@style}
+    \let\temp@putbib\putbib%
+    \def\putbib
+    {%
+        \let\temp@bibname\bibname%
+        \def\bibname{\@chapapp\space\temp@bibname}%
+        \let\temp@section\section%
+        \renewcommand{\section}[2]{\temp@section{\bibname}}%
+        \temp@putbib%
+        \@ifundefined{temp@section}{}{\let\section\temp@section}%
+        \let\bibname\temp@bibname%
+    }%
+%    \end{macrocode}
+%
+%^^A------------------------------------------------------------
+%^^A-             Set-up minitoc                           -
+%^^A------------------------------------------------------------
+%       \subsubsection{Configure \texttt{minitoc}}
+%           \label{subsubsec:minitocs}
+%           We shall set up the minitocs to have a depth of 3.
+%           We shall also set up some indenting and some fonts.
+%    \begin{macrocode}
+    \dominitoc%
+    \dominilof%
+    \dominilot%
+    \setcounter{minitocdepth}{3}%
+    \setlength{\mtcindent}{\mtc@indent}%
+    \renewcommand{\mtcfont}{\small\rm}%
+    \renewcommand{\mtcSfont}{\small\bf}%
+%    \end{macrocode}
+%
+%^^A------------------------------------------------------------
+%^^A-             Set-up nomenclature                           -
+%^^A------------------------------------------------------------
+%       \subsubsection{Configure \texttt{nomencl2}}
+%           \label{subsubsec:nomencl2}
+%           We need to make a call to |\mtcaddchapter| as we do not have
+%           a minitoc for the `chapter' Nomenclature. Also, |\mtcaddchapter| add
+%           an entry to the TOC for us. |\@mkboth| is used to update the header
+%           information.
+%    \begin{macrocode}
+    \renewcommand{\nompreamble}{\mtcaddchapter[\nomname]\@mkboth{\MakeUppercase\nomname}{\MakeUppercase\nomname}}%
+    \makenomenclature%
+%    \end{macrocode}
+%
+%^^A------------------------------------------------------------
+%^^A-             Set-up glossary                           -
+%^^A------------------------------------------------------------
+%       \subsubsection{Configure \texttt{glossary}}
+%           \label{subsubsec:glossary}
+%
+%    \begin{macrocode}
+    \renewcommand{\glossaryname}{Glossary of Terms}%  Change title of glossary
+    \setlength{\descriptionwidth}{110mm}%
+    \let\old@afterglossary\afterglossary%
+    \renewcommand{\afterglossary}{\adjustmtc\relax\addcontentsline{lof}{xchapter}{}\relax\addcontentsline{lot}{xchapter}{}\relax\old@afterglossary}
+    \makeglossary%
+%    \end{macrocode}
+%
+%^^A------------------------------------------------------------
+%^^A-             Set-up chapterEnv                            -
+%^^A------------------------------------------------------------
+%       \subsubsection{Configure \texttt{chapterEnv}}
+%           \label{subsubsec:chapterEnv}
+%           At the beginning of each chapter we will include a
+%           single-spaced |minitoc|.
+%    \begin{macrocode}
+    \newif\if@chapmtc\@chapmtctrue%
+    \newif\if@chapmlf\@chapmlffalse%
+    \newif\if@chapmlt\@chapmltfalse%
+    \newif\if@chapbu\@chapbutrue%
+    \newcommand{\showmtc}{\@chapmtctrue}%
+    \newcommand{\hidemtc}{\@chapmtcfalse}%
+    \newcommand{\showmlf}{\@chapmlftrue}%
+    \newcommand{\hidemlf}{\@chapmlffalse}%
+    \newcommand{\showmlt}{\@chapmlttrue}%
+    \newcommand{\hidemlt}{\@chapmltfalse}%
+    \newcommand{\showbu}{\@chapbutrue}%
+    \newcommand{\hidebu}{\@chapbufalse}%
+    \addToStartOfChapter%
+    {%
+        \acresetall%
+        \begin{singlespace}%
+            \if@chapmtc%
+                \minitoc%
+                \if@chapmlf%
+                    \mtcskip%
+                \fi%
+            \fi%
+            \if@chapmlf%
+                \minilof%
+                \if@chapmlt%
+                    \mtcskip%
+                \fi%
+            \fi%
+            \if@chapmlt%
+                \minilot%
+            \fi%
+        \end{singlespace}%
+        \begin{bibunit}
+    }%
+    %    \end{macrocode}
+    %           At the end of each chapter we will include a |bibunit|.
+    %    \begin{macrocode}
+    \addToEndOfChapter%
+    {%
+            \begin{singlespace}%
+                \if@chapbu%
+                    \putbib%
+                \fi%
+            \end{singlespace}%
+
+        \end{bibunit}
+    }%
+%    \end{macrocode}
+%       The end of |\SetupPackages|:
+%    \begin{macrocode}
+}%
+\AtBeginDocument{\SetupPackages}
+%    \end{macrocode}
+%^^A------------------------------------------------------------
+%^^A-             Redeclare the abstract environment           -
+%^^A------------------------------------------------------------
+% \begin{environment}{abstract}
+%   The |abstract| environment creates an abstract chapter.
+%    \begin{macrocode}
+\renewenvironment{abstract}%
+{%
+    \hidemtc% Remove MiniTOC
+    \hidebu% Remove MiniTOC
+    \begin{chapterEnv}{Abstract}
+}%
+%    \end{macrocode}
+%    \begin{macrocode}
+{%
+    \end{chapterEnv}
+    \showmtc%
+    \showbu%
+}%
+%    \end{macrocode}
+% \end{environment}
+%^^A------------------------------------------------------------
+%^^A-             Page Setup                           -
+%^^A------------------------------------------------------------
+%       \subsection{Set Up Page}
+%       \label{subsec:page}
+%
+%    \begin{macrocode}
+% Vertical Setup
+    % A4 height is 297mm
+    \voffset    -25.4mm % Remove Latex one inch offset
+    \topmargin  15mm    % Top of page to top of header
+    \headheight 5mm    % Height of header
+    \headsep    10mm    % Bottom of header to top of body
+    \textheight 242mm   % Body height 15+5+10+<body>+10+15 = 297
+    \footskip   10mm    % Bottom of body to bottom of footer
+
+% Horizontal Setup
+    % A4 width is 210mm
+    \hoffset        -25.4mm % Remove Latex one inch offset
+    \oddsidemargin  40mm    % Binding side margin width - page edge to body
+    \textwidth      155mm   % Body width 40+<body>+0+0+15 = 210
+    \marginparsep   0mm     % Separation between body and margin motes
+    \marginparwidth 0mm     % Margin notes width
+    %\marginparpush  0mm     % ???
+
+% Paragraph Setup
+\parindent  0pt % Paragraph Indent
+\parskip    4pt % Vertical distance between paragraphs
+
+% Line Setup
+\setstretch{1.5}   % Line spacing
+
+% set page style
+    \pagestyle{fancy}
+
+% header
+    \lhead{\bfseries\small\nouppercase{\rightmark}}%
+    \rhead{\bfseries\small\nouppercase{\thepage}}%
+    \renewcommand{\headrulewidth}{2pt}%
+
+% footer
+
+    %\lfoot{}
+    \cfoot{}
+    \rfoot{}
+    %\renewcommand{\footrulewidth}{0.4pt}
+
+% Footnotes
+
+    \renewcommand{\@makefnmark}{\mbox{$^{[\@thefnmark]}$}}% - Add [ ] around footnote numbers (to avoid confusion with indicies)
+
+% Float Captions
+    \let\old@makecaption\@makecaption%
+    \renewcommand{\@makecaption}{\caption@size\old@makecaption}%
+
+%    \end{macrocode}
+%^^A------------------------------------------------------------
+%^^A-             Title Page                           -
+%^^A------------------------------------------------------------
+%       \subsection{Title Page}
+%       \label{subsec:titlepage}
+%
+%    \begin{macrocode}
+\newlength{\barlength}
+\setlength{\barlength}{\textwidth} \addtolength{\barlength}{-1pt}
+\newlength{\VerticalOffset}
+\setlength{\VerticalOffset}{5cm}
+
+\newcommand{\defaulttitlefont}{\fontsize{10.95}{13.6}\selectfont}
+\newcommand{\titlefont}{\bfseries \fontsize{22}{26.42pt}\selectfont}
+\newcommand{\largetitlefont}{\bfseries \fontsize{29.88}{35.88pt}\selectfont}
+\newcommand{\othertitlefont}{\fontsize{14.4}{17.28}\selectfont}
+\newcommand{\authorfont}{\bfseries \fontsize{14.4}{17.28}\selectfont}
+\newcommand{\informationfont}{\fontsize{10}{12}\selectfont}
+\newcommand{\dedicationfont}{\slshape \fontsize{14.4}{17.28}\selectfont}
+
+\newcommand{\thisyear}{\number\year}
+\def\thismonth{\ifcase\month\or January\or February\or March\or
+  April\or May\or June\or July\or August\or September\or October\or November\or December\fi}
+\newcommand{\todaysdate}{\thismonth, \thisyear}
+
+% Create some bools for title page
+\define@boolkeys{titlepagekeys}[tp@]{cover,title,logo}{}%
+% Set defaults
+\tp@covertrue%
+\tp@titletrue%
+\tp@logotrue%
+
+\providecommand*{\sectfont}{\relax}
+%    \end{macrocode}
+%^^A------------------------------------------------------------
+%^^A-             Redeclare the titlepage environment           -
+%^^A------------------------------------------------------------
+%   The |titlepage| environment creates an titlepage.
+%    \begin{macrocode}
+\renewenvironment{titlepage}[1][,]%
+{%
+    \setkeys{titlepagekeys}{#1}%
+    \relax%
+}%
+%    \end{macrocode}
+%    \begin{macrocode}
+{%
+    {\singlespacing
+
+        \let\footnotesize\small
+        \let\footnoterule\relax
+        \defaulttitlefont
+
+        % Front Cover - temporarily balance margins to 35mm each side
+        \iftp@cover
+            \thispagestyle{empty}
+            \begin{list}{}{
+                    \setlength{\leftmargin}{-5mm}%
+                    \setlength{\rightmargin}{20mm}%
+                }
+                \item[]%
+
+                \vspace*{3cm}
+                \begin{center}
+                    {\titlefont \@title}
+                \end{center}
+                \par
+                \vspace*{\fill}
+                \par
+                \begin{center}
+                    {\othertitlefont \@author}
+                \end{center}
+                \par
+                \vspace*{\fill}
+                \par
+                \begin{center}
+                    {\othertitlefont \textsc{Ph.D.}}
+                \end{center}
+                \par
+                \vspace*{2cm}
+                \par
+                \begin{center}
+                    {\othertitlefont
+                    \textsc{The University of York}\\
+                    \textsc{Department of Electronics}}
+                \end{center}
+                \par
+                \vspace*{2cm}
+                \par
+                \begin{center}
+                    {\othertitlefont \@date}
+                \end{center}
+                \par
+            \end{list}
+        \fi
+
+        \iftp@title
+            % Title page with university description
+            \newpage \thispagestyle{empty}
+            \vspace*{1.5cm}
+            \begin{flushright}
+                \largetitlefont \@title
+            \end{flushright}
+            \par
+            \vspace*{\fill}
+            \begin{flushright}
+                \parbox{.63\linewidth}{\othertitlefont
+                Submitted in accordance to the requirements
+                of the University of York for the degree of
+                Doctor of Philosophy.}
+            \end{flushright}
+            \vspace*{\fill}
+            \par
+            \begin{flushright}
+                {\authorfont \@author}\\[2mm]
+                {\othertitlefont \@date}\\[1mm]
+                \rule{.63\linewidth}{0.8mm}\\[0mm]
+                \vspace*{3mm}
+
+                \iftp@logo
+                    \epsfig{file=uoyths_logo.eps,width=.63\linewidth}
+                \else
+                    \textsc{Intelligent Systems Research Group}\\[1mm]
+                    {\othertitlefont Department of Electronics}\\[1mm]
+                    {\othertitlefont University of York}\\[5mm]
+                \fi
+            \end{flushright}
+            \par
+        \fi
+
+        % Reset Footnote counter
+        \setcounter{footnote}{0}%
+
+        % Remove \maketitle commands
+        \let\thanks\relax\let\maketitle\relax
+
+        % Remove other commands
+        \gdef\@thanks{}\gdef\@author{}\gdef\@title{}
+
+    }% End Single Spacing
+}%
+%    \end{macrocode}
+%
+%^^A------------------------------------------------------------
+%^^A-             Additional Functions                           -
+%^^A------------------------------------------------------------
+%       \subsection{Additional Functions}
+%       \label{subsec:addfunc}
+%
+%    \begin{macrocode}
+% Acronym Glossary Entry
+\newcommand{\glossac}[2]{%
+\ifthenelse{\equal{#2}{}}%
+    {\glossary{sort={#1},name={\string\acs{#1}},description={\string\acl{#1}.}}}%
+    {\glossary{sort={#1},name={\string\acs{#1}},description={\string\acl{#1}---#2}}}%
+}
+%    \end{macrocode}
+%    \begin{macrocode}
+\newcommand{\printbibliography}{%
+    \let\thebibliographytemp\thebibliography%
+    \bibliographyunit%
+    \let\thebibliography\stdthebibliography%
+    \bibliographystyle{\cite@style}%
+    \newcommand{\bibpreamble}{\mtcaddchapter[\bibname]}%
+    \bibliography{\bib@file}%
+    \renewcommand{\bibpreamble}{}%
+    \let\thebibliography\thebibliographytemp%
+}
+\newcommand{\stopstar}
+{
+    \let\temp@schapter\@schapter%
+    \renewcommand{\@schapter}[1]{\@chapter[##1]{##1}}%
+    \let\temp@ssect\@ssect%
+    \renewcommand{\@ssect}[5]{\@sect{section}{1}{##1}{##2}{##3}{##4}[##5]{##5}}%
+}
+
+\newcommand{\startstar}
+{
+    \@ifundefined{temp@schapter}{}{\let\@schapter\temp@schapter}%
+    \@ifundefined{temp@ssect}{}{\let\@ssect\temp@ssect}%
+}
+
+\def\possessive@postmark{'s}%
+
+\newcommand{\possessivecite}[1]%
+{%
+    \citeauthor{#1}\possessive@postmark\ \citeyearpar{#1}
+}%
+
+% Referencing commands
+\newcommand{\figref}[1]{\figurename~\ref{#1}}%
+\newcommand{\Figref}[1]{\figurename~\ref{#1}}%
+\newcommand{\tabref}[1]{\tablename~\ref{#1}}%
+\newcommand{\Tabref}[1]{\tablename~\ref{#1}}%
+\newcommand{\chapref}[1]{\chaptername~\ref{#1}}%
+\newcommand{\Chapref}[1]{\chaptername~\ref{#1}}%
+\newcommand{\appenref}[1]{\appendixname~\ref{#1}}%
+\newcommand{\Appenref}[1]{\appendixname~\ref{#1}}%
+\newcommand{\secref}[1]{Section~\ref{#1}}%
+\newcommand{\Secref}[1]{Section~\ref{#1}}%
+\newcommand{\subsecref}[1]{\textsection\ref{#1}}%
+\newcommand{\Subsecref}[1]{Subsection~\ref{#1}}%
+% \eqref already defined
+\newcommand{\Eqref}[1]{Equation~\eqref{#1}}%
+%    \end{macrocode}
+%
+% \iffalse
+%</class>
+% \Finale
+%
+%^^A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%^^A%                END OF PACKAGE
+%^^A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%^^A---------------------------------------------------------------------
+%^^A-                comp_bibunits batch file
+%^^A---------------------------------------------------------------------
+%<*comp>
+%<<COMMENT
+@echo off
+echo Compile bibunits.....
+echo ...
+echo ...
+for %%f in (bu*.aux) do call comp_bibunit %%~nf
+if exist comp_bibunits.tmp del comp_bibunits.tmp
+echo ...
+echo Making glossary.....
+echo ...
+echo ...
+for %%f in (*.ist) do makeindex -s %%~nf.ist -t %%~nf.glg -o %%~nf.gls %%~nf.glo
+echo ...
+echo Making nomenclature.....
+echo ...
+for %%f in (*.ist) do makeindex -s nomencl.ist -t %%~nf.nlg -o %%~nf.nls %%~nf.nlo
+echo ...
+if %errorlevel%==0 echo ...Done!
+pause
+%COMMENT
+%</comp>
+%
+%^^A---------------------------------------------------------------------
+%^^A-                comp_bibunit batch file
+%^^A---------------------------------------------------------------------
+%<*compbibunit>
+%<<COMMENT
+@echo off
+if %1==bu goto end
+find "\citation" < %1.aux > comp_bibunits.tmp
+if %errorlevel%==0 bibtex %1 echo & echo.
+:end
+%COMMENT
+%</compbibunit>
+%
+%^^A---------------------------------------------------------------------
+%^^A-                example thesis file
+%^^A---------------------------------------------------------------------
+%<*exampletex>
+%<<COMMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% File:     example.tex
+%% Purpose:  Example Thesis File!
+%% Usage:    Compile with LaTeX, run COMPILE.bat, and then
+%%           compile with LaTeX again.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{uoyths}
+
+% Set the bibliography file
+\SetBibliographyFile{example}%
+
+\begin{document}
+    % Content generation macros (ignore!)
+    \input{lorem.tex}
+
+    % Title Page
+    \begin{titlepage}[cover=true, title=true, logo=true] % (default, so pointless other than to show syntax)
+        \title{Lorem Ipsum Dolor Sit Amet, Consectetuer Adipiscing Elit.}
+        \author{Cicero}
+        \date{\today}
+    \end{titlepage}
+
+    % Front Matter
+    \begin{frontMatterEnv}
+
+        % Abstract
+        \begin{abstract}
+            \loremB{}
+        \end{abstract}
+
+        % Table of Contents
+        {\singlespacing\tableofcontents}%
+
+        % Preface
+        \begin{chapterEnv}{Preface}
+            \loremC{}
+            \loremB{}
+        \end{chapterEnv}
+
+        % Acknowledgments
+        \begin{chapterEnv}{Acknowledgments}
+            \loremB{}
+        \end{chapterEnv}
+
+        % Declaration
+        \begin{chapterEnv}{Acknowledgments}
+            \loremA{}
+        \end{chapterEnv}
+
+    \end{frontMatterEnv}
+
+    % Main Matter
+    \begin{mainMatterEnv}
+
+        % Introductory Chapter
+        \begin{chapterEnv}[chap:intro]{Introduction}
+            % Introductory Section
+            \begin{sectionEnv}[sec:intro-intro]{Introduction}
+                \loremC{}
+            \end{sectionEnv}
+            % Another Section
+            \begin{sectionEnv}[sec:intro-history]{History}
+                \loremD{}
+                % Subsection
+                \begin{subSectionEnv}[subsec:intro-recent]{Recent Attempts}
+                    \loremB{}
+                \end{subSectionEnv}
+            \end{sectionEnv}
+            % Summary Section
+            \begin{sectionEnv}[sec:intro-summary]{Summary}
+                \loremC{}
+            \end{sectionEnv}
+        \end{chapterEnv}
+
+        % Chapter 2
+        \begin{chapterEnv}[chap:concepts]{Concepts}
+            \begin{sectionEnv}[sec:concepts-intro]{Introduction}
+                \loremC{}
+            \end{sectionEnv}
+            \begin{sectionEnv}[sec:concepts-discussion]{Discussion}
+                \loremB{}
+                \begin{subSectionEnv}[subsec:concepts-recent]{Recent Attempts}
+                    \loremB{}
+                \end{subSectionEnv}
+            \end{sectionEnv}
+
+            \begin{sectionEnv}[sec:concepts-findings]{Findings}
+                \begin{subSectionEnv}[subsec:concepts-argument1]{First Argument}
+                    \loremA{}
+                \end{subSectionEnv}
+                \begin{subSectionEnv}[subsec:concepts-argument2]{Second Argument}
+                    \loremA{}
+                \end{subSectionEnv}
+                \begin{subSectionEnv}[subsec:concepts-argument3]{Final Argument}
+                    \loremA{}
+                \end{subSectionEnv}
+            \end{sectionEnv}
+
+            \begin{sectionEnv}[sec:intro-summary]{Summary}
+                \loremC{}
+            \end{sectionEnv}
+        \end{chapterEnv}
+
+        % Chapter 3
+        \begin{chapterEnv}[chap:method]{Methodology}
+            \begin{sectionEnv}[sec:method-intro]{Introduction}
+                \loremC{}
+            \end{sectionEnv}
+
+            \begin{sectionEnv}[sec:method-integration]{Integration}
+                \loremA{}
+                \begin{subSectionEnv}[subsec:method-problems]{Problems}
+                    \loremB{}
+                \end{subSectionEnv}
+                \begin{subSectionEnv}[subsec:method-hierarchy]{Hierarchy}
+                    % Sub-sub-sections
+                    \begin{subSubSectionEnv}[subsec:method-step1]{Step 1}
+                        \loremA{}
+                    \end{subSubSectionEnv}
+                    \begin{subSubSectionEnv}[subsec:method-step2]{Step 2}
+                        \loremA{}
+                    \end{subSubSectionEnv}
+                    \begin{subSubSectionEnv}[subsec:method-step3]{Step 3}
+                        \loremA{}
+                    \end{subSubSectionEnv}
+                \end{subSectionEnv}
+            \end{sectionEnv}
+
+            \begin{sectionEnv}[sec:concepts-implementation]{Implementation}
+                \begin{subSectionEnv}[subsec:method-justification]{Justification}
+                    \loremB{}
+                \end{subSectionEnv}
+                \begin{subSectionEnv}[subsec:concepts-formality]{Formality}
+                    \loremB{}
+                \end{subSectionEnv}
+                \begin{subSectionEnv}[subsec:concepts-succession]{Succession}
+                    \loremC{}
+                \end{subSectionEnv}
+            \end{sectionEnv}
+
+            \begin{sectionEnv}[sec:concepts-summary]{Summary}
+                \loremC{}
+            \end{sectionEnv}
+        \end{chapterEnv}
+
+        % Conclusions Chapter
+        \begin{chapterEnv}[chap:conclusion]{Conclusions and Further Work}
+            \begin{sectionEnv}[sec:conclusion-intro]{Introduction}
+                \loremB{}
+            \end{sectionEnv}
+
+            \begin{sectionEnv}[sec:conclusion-resolution]{Resolution}
+                \loremA{}
+                \begin{subSectionEnv}[subsec:conclusion-accuracy]{Accuracy}
+                    \loremB{}
+                \end{subSectionEnv}
+                \begin{subSectionEnv}[subsec:conclusion-verification]{Verification}
+                    \loremC{}
+                \end{subSectionEnv}
+                \begin{subSectionEnv}[subsec:conclusion-reasoning]{Reasoning}
+                    \loremC{}
+                \end{subSectionEnv}
+            \end{sectionEnv}
+
+            \begin{sectionEnv}[sec:conclusion-further]{Further Work}
+                \loremA{}
+                \begin{subSectionEnv}[subsec:conclusion-continuation]{Continuation}
+                    \loremB{}
+                \end{subSectionEnv}
+                \begin{subSectionEnv}[subsec:conclusion-ideas]{Ideas}
+                    \loremA{}
+                \end{subSectionEnv}
+            \end{sectionEnv}
+
+            \begin{sectionEnv}[sec:conclusion-summary]{Summary}
+                \loremB{}
+            \end{sectionEnv}
+        \end{chapterEnv}
+
+    \end{mainMatterEnv}
+
+    % Back Matter
+    \begin{backMatterEnv}
+
+        % Nomenclature
+        \printnomenclature%
+
+        % Glossary
+        \printglossary%
+
+        % Bibliography
+        %Included for Gather Purpose only (WinEdt):
+        %input "example.bib"
+        \printbibliography%
+
+        % Appendix
+        \begin{chapterEnv}[appen:systems]{Systems}
+            \begin{sectionEnv}[asec:systems-intro]{Introduction}
+                \loremB{}
+            \end{sectionEnv}
+
+            \begin{sectionEnv}[asec:systems-integration]{Resolution}
+                \loremA{}
+                \begin{subSectionEnv}[asubsec:systems-accuracy]{Accuracy}
+                    \loremB{}
+                    \begin{subSubSectionEnv}[asubsubsec:systems-arg1]{Argument 1}
+                        \loremA{}
+                    \end{subSubSectionEnv}
+                    \begin{subSubSectionEnv}[asubsubsec:systems-arg2]{Argument 2}
+                        \loremA{}
+                    \end{subSubSectionEnv}
+                    \begin{subSubSectionEnv}[asubsubsec:systems-arg3]{Argument 3}
+                        \loremA{}
+                    \end{subSubSectionEnv}
+                \end{subSectionEnv}
+                \begin{subSectionEnv}[asubsec:systems-validity]{Validity}
+                    \loremC{}
+                \end{subSectionEnv}
+            \end{sectionEnv}
+
+            \begin{sectionEnv}[asec:systems-summary]{Summary}
+                \loremB{}
+            \end{sectionEnv}
+        \end{chapterEnv}
+
+
+
+    \end{backMatterEnv}
+
+\end{document}
+%COMMENT
+%</exampletex>
+%
+%^^A---------------------------------------------------------------------
+%^^A-                bib file for example thesis
+%^^A---------------------------------------------------------------------
+%<*examplebib>
+%<<COMMENT
+@article{gre34, AUTHOR={B D Greenshields}, TITLE={A Study of Traffic
+Capacity}, JOURNAL={HRB Proc}, YEAR={1934}, volume={14},
+pages={448-477}, }
+
+@book{kop93, AUTHOR={Helmut Kopka and Patrick W Daly}, TITLE={A
+Guide to {\LaTeX} {D}ocument Preparation},
+PUBLISHER={Addison-Wesley}, YEAR={1993}, }
+
+@inproceedings{neu59, AUTHOR={J Neumann}, TITLE={Theory of automata:
+Construction, reproduction, homogeneity}, BOOKTITLE={Theory of
+Self-Reproduction Automata}, YEAR={1959}, editor={W Arthur Burks}, }
+
+@misc{ale97, author={D {McAley}}, title={The back-propagation
+network: learning by example}, year={1997}, }
+
+@phdthesis{bad93, AUTHOR={K M Badrinath}, TITLE={Urban traffic
+system model for managing traffic}, SCHOOL={University of Kakatiya},
+YEAR={1993}, type={Ph.{D}.{T}hesis(unpublished)},
+address={Warangal}, }
+
+@techreport{ram77, author={T V Ramanayya}, title={Analysis of mixed
+stream characteristics}, institution={REC Warangal}, year={1977},
+type={Research Report}, }
+%COMMENT
+%</examplebib>
+%
+%^^A---------------------------------------------------------------------
+%^^A-                content file for example thesis
+%^^A---------------------------------------------------------------------
+%<*lorem>
+%<<COMMENT
+\def\loremA{Morbi eget tellus vitae purus iaculis dignissim. Donec
+id sem et ligula pretium semper. Ut laoreet metus vitae tellus.
+Phasellus magna lectus, sagittis eu, pellentesque sed, fringilla a,
+lorem. Sed libero. Fusce a massa. Duis nibh nisl, laoreet sit amet,
+tincidunt nec, condimentum ac, sem. Sed vestibulum semper justo.
+Proin sollicitudin tincidunt nisl. Pellentesque diam purus,
+vestibulum et, dignissim dapibus, lobortis quis, tortor.\\}
+
+\def\loremB{Lorem ipsum\footnote{see Glossary} dolor sit amet, consectetuer
+adipiscing elit. Aenean fringilla sapien a sapien. Nullam venenatis.
+Vestibulum condimentum laoreet quam. Sed scelerisque, ante semper
+tempus laoreet, sapien eros euismod ligula, id vehicula turpis
+tellus eu lectus. Vivamus at tellus. Proin eleifend. Nunc adipiscing
+pulvinar felis. Quisque tempor, nunc non sagittis ultrices, orci
+neque viverra ipsum, sed semper quam dui nec risus. Maecenas,
+\cite{ale97} nec metus imperdiet lectus ornare porttitor. Sed eget
+nulla id justo mattis vestibulum. Donec a dui non lectus elementum
+condimentum. Duis consequat vulputate neque. Nullam vel odio. Donec
+quis purus. Aenean ac massa at lorem aliquam nonummy. Donec
+lacinia.\\}
+
+\def\loremC{Nam volutpat dui eget dolor. Duis consequat. Sed lectus.
+Pellentesque imperdiet \cite{kop93}, velit bibendum congue
+ultricies, sapien augue convallis lectus, non tincidunt wisi elit
+sit amet neque. Proin velit. In scelerisque elit sed enim. Quisque
+cursus, diam vel convallis lacinia, justo turpis aliquet magna, vel
+mattis tellus wisi eu quam. Donec egestas turpis lacinia mi.
+Vestibulum sagittis adipiscing leo. Fusce aliquet ultrices nibh.
+Cras adipiscing euismod ante. Etiam vitae enim. Class aptent taciti
+sociosqu ad litora torquent per conubia nostra, per inceptos
+hymenaeos. Class aptent taciti sociosqu ad litora torquent per
+conubia nostra, per inceptos hymenaeos. Vivamus lobortis
+pellentesque leo. Fusce et tellus. Vestibulum ante ipsum primis
+\cite{ram77} in faucibus orci luctus et ultrices posuere cubilia
+Curae; In ante justo, vulputate at, viverra non, ornare a, eros.\\
+
+Nam vestibulum, lacus vitae nonummy rhoncus, quam lorem varius
+risus, nec eleifend felis dolor in sapien. Suspendisse potenti. In
+sed urna eget pede fermentum tincidunt. Morbi in ante. Vestibulum
+ante ipsum primis in faucibus orci luctus et ultrices posuere
+cubilia Curae; Curabitur felis odio, fermentum ut, dignissim
+volutpat, rhoncus ac, urna. Morbi non tortor. Aliquam iaculis, purus
+a porttitor fermentum, justo massa gravida libero, in sollicitudin
+libero risus et augue. Suspendisse facilisis malesuada lacus. Donec
+fringilla sollicitudin massa. Aenean feugiat, diam sed.\\}
+
+\def\loremD{Suspendisse at sem. Phasellus consequat placerat est. Nullam rutrum
+consequat elit. Suspendisse potenti. Fusce et leo. Vivamus nunc
+dolor, hendrerit non, mattis quis, tempus vitae, ante. Proin a
+ligula sit amet diam viverra euismod. Nunc sapien nibh, viverra vel,
+ultrices eu, facilisis lacinia, elit. Nunc ut arcu, \cite{bad93}.
+Mauris eleifend. Pellentesque vitae eros. Pellentesque fringilla
+consequat purus. Proin vestibulum. Nulla mattis justo sed ante.
+Morbi tempor feugiat arcu. Pellentesque habitant morbi tristique
+senectus et netus et malesuada fames ac turpis egestas. Suspendisse
+potenti. Pellentesque quam.\\
+
+Etiam nunc. Etiam vestibulum, metus ut ullamcorper tristique, massa
+felis convallis risus, sit amet mollis lorem turpis eu magna.
+Praesent fermentum rutrum neque. Morbi posuere tortor eget tellus.
+Cras eget velit sed urna molestie venenatis. Donec tincidunt. Donec
+pede massa, vestibulum ut, commodo at, vehicula in, pede. Donec
+volutpat dui id metus. Nulla facilisi. Curabitur porttitor purus
+eget leo. Donec vitae velit.\\
+
+\glossary{name={Lorem Ipsum},description={Contrary to popular
+belief, Lorem Ipsum is not simply random text. It has roots in a
+piece of classical Latin literature from 45 BC, making it over 2000
+years old.}}
+
+Integer justo nibh, volutpat at, vestibulum id, pulvinar quis, ante.
+Phasellus molestie ante vitae massa. Donec pulvinar. Nullam
+malesuada condimentum massa. Aenean lacus. Integer ultrices lobortis
+libero. Pellentesque orci tortor, molestie eget, auctor in,
+adipiscing hendrerit, mauris. Nulla justo turpis, porttitor eget,
+venenatis eu, congue a, leo. Fusce ac ante vel urna tincidunt
+cursus. Etiam a tortor. Aliquam nibh sapien, consequat et, rhoncus
+et, vehicula a, velit. Phasellus eros. Phasellus vehicula egestas
+est.
+\begin{equation}\label{eqn:newton2nd}
+    F = ma
+\end{equation}
+\nomenclature[F]{$F$}{Force (Newtons)}%
+\nomenclature[m]{$m$}{Mass (kg)}%
+\nomenclature[a]{$a$}{Acceleration ($ms^{-1}$)}%
+
+Etiam lectus. Fusce dictum, nisl sed tincidunt porta, orci sem
+tincidunt diam, ac euismod ipsum ante sed ante. Nullam erat eros,
+placerat sagittis, pharetra sed, feugiat sed \cite{neu59}, velit.
+Nam imperdiet accumsan purus. Sed quam velit, sollicitudin eu,
+pharetra sed, tristique id, est. Suspendisse potenti. Maecenas odio
+mauris, varius non, tempor at, interdum non, ligula. Donec non neque
+et erat lobortis sollicitudin. Donec lacinia velit ut eros. Aliquam
+diam mauris, pulvinar non, fringilla at, varius vel, ligula. Cras
+vitae tortor. Integer mollis rutrum turpis.\\
+
+Aenean quis lacus. Aenean venenatis magna eu augue. Sed at dui at mi
+adipiscing condimentum. Aliquam et nisl. Nulla interdum, orci nec
+euismod mollis, est felis condimentum pede, nec auctor turpis tellus
+eu nisl. Sed pharetra purus at odio. Sed ornare, enim at sagittis
+interdum, risus lorem cursus erat, nec imperdiet augue nunc eu
+mauris. Maecenas pretium tempus wisi. Mauris mauris neque, auctor
+sed, aliquet ut, scelerisque sed, nibh. Proin ut quam. Vivamus vitae
+risus sed erat molestie cursus. Ut a pede. Phasellus sed pede. Proin
+eget leo. Sed nibh. Integer eu justo. Curabitur nec libero non enim
+dictum malesuada. Praesent tempus, felis nec accumsan tempor, tellus
+dui accumsan arcu, vitae suscipit orci ipsum at dolor. In hac
+habitasse platea dictumst. Morbi nibh libero, venenatis non, posuere
+quis, tincidunt in, orci.\\
+
+Duis rhoncus. Aenean lectus lacus, facilisis tincidunt, consectetuer
+eget, fringilla eget, ipsum. Sed mattis enim porttitor nunc.
+Praesent consequat nibh sed lacus. Nullam in ante. Morbi commodo
+sagittis mauris. Vivamus aliquam sapien quis justo. Curabitur vel
+dolor non dui tristique tempus. Nunc velit nunc, porttitor sodales,
+tincidunt quis, fermentum laoreet, arcu. Aenean magna magna, dictum
+ac, condimentum a, sodales id, nibh. Cras eu risus et dui tristique
+varius. Aliquam erat lectus, commodo sit amet, porttitor ut, luctus
+id, ipsum. In hac habitasse platea dictumst. Aenean viverra justo et
+pede.\\
+
+Sed at tellus. Aenean bibendum, quam at vestibulum hendrerit, sem
+wisi ultrices felis, nec volutpat diam risus id justo. Integer
+malesuada.\\}
+%COMMENT
+%</lorem>
+%
+%^^A---------------------------------------------------------------------
+%^^A-                University of York logo file
+%^^A---------------------------------------------------------------------
+%<*logo>
+%<<COMMENT
+%!PS-Adobe-3.0 EPSF-3.0
+%%BoundingBox: 127 578 458 645
+%%HiResBoundingBox: 127.300000 578.106885 457.845850 644.895654
+%.................................
+%%Creator: AFPL Ghostscript 800 (epswrite)
+%%CreationDate: 2005/06/08 15:25:58
+%%DocumentData: Clean7Bit
+%%LanguageLevel: 2
+%%EndComments
+%%BeginProlog
+% This copyright applies to everything between here and the %%EndProlog:
+% Copyright (C) 2002 artofcode LLC, Benicia, CA.  All rights reserved.
+%%BeginResource: procset GS_epswrite_2_0_1001
+/GS_epswrite_2_0_1001 80 dict dup begin
+/PageSize 2 array def/setpagesize{ PageSize aload pop 3 index eq exch
+4 index eq and{ pop pop pop}{ PageSize dup  1
+5 -1 roll put 0 4 -1 roll put dup null eq {false} {dup where} ifelse{ exch get exec}
+{ pop/setpagedevice where
+{ pop 1 dict dup /PageSize PageSize put setpagedevice}
+{ /setpage where{ pop PageSize aload pop pageparams 3 {exch pop} repeat
+setpage}if}ifelse}ifelse}ifelse} bind def
+/!{bind def}bind def/#{load def}!/N/counttomark #
+/rG{3{3 -1 roll 255 div}repeat setrgbcolor}!/G{255 div setgray}!/K{0 G}!
+/r6{dup 3 -1 roll rG}!/r5{dup 3 1 roll rG}!/r3{dup rG}!
+/w/setlinewidth #/J/setlinecap #
+/j/setlinejoin #/M/setmiterlimit #/d/setdash #/i/setflat #
+/m/moveto #/l/lineto #/c/rcurveto #
+/p{N 2 idiv{N -2 roll rlineto}repeat}!
+/P{N 0 gt{N -2 roll moveto p}if}!
+/h{p closepath}!/H{P closepath}!
+/lx{0 rlineto}!/ly{0 exch rlineto}!/v{0 0 6 2 roll c}!/y{2 copy c}!
+/re{4 -2 roll m exch dup lx exch ly neg lx h}!
+/^{3 index neg 3 index neg}!
+/f{P fill}!/f*{P eofill}!/s{H stroke}!/S{P stroke}!
+/q/gsave #/Q/grestore #/rf{re fill}!
+/Y{P clip newpath}!/Y*{P eoclip newpath}!/rY{re Y}!
+/|={pop exch 4 1 roll 3 array astore cvx exch 1 index def exec}!
+/|{exch string readstring |=}!
+/+{dup type/nametype eq{2 index 7 add -3 bitshift 2 index mul}if}!
+/@/currentfile #/${+ @ |}!
+/B{{2 copy string{readstring pop}aload pop 4 array astore cvx
+3 1 roll}repeat pop pop true}!
+/Ix{[1 0 0 1 11 -2 roll exch neg exch neg]exch}!
+/,{true exch Ix imagemask}!/If{false exch Ix imagemask}!/I{exch Ix image}!
+/Ic{exch Ix false 3 colorimage}!
+/F{/Columns counttomark 3 add -2 roll/Rows exch/K -1/BlackIs1 true>>
+/CCITTFaxDecode filter}!/FX{<</EndOfBlock false F}!
+/X{/ASCII85Decode filter}!/@X{@ X}!/&2{2 index 2 index}!
+/@F{@ &2<<F}!/@C{@X &2 FX}!
+/$X{+ @X |}!/&4{4 index 4 index}!/$F{+ @ &4<<F |}!/$C{+ @X &4 FX |}!
+/IC{3 1 roll 10 dict begin 1{/ImageType/Interpolate/Decode/DataSource
+/ImageMatrix/BitsPerComponent/Height/Width}{exch def}forall
+currentdict end image}!
+/~{@ read {pop} if}!
+end readonly def
+%%EndResource
+/pagesave null def
+%%EndProlog
+%%Page: 1 1
+%%BeginPageSetup
+GS_epswrite_2_0_1001 begin
+/pagesave save store 100 dict begin
+0.1 0.1 scale
+%%EndPageSetup
+gsave mark
+Q q
+0 0 250000 0 0 250000 ^ Y
+q[395.52 0 0 518.4 1273.47 5843.07]concat
+103 135 8[103 0 0 -135 0 135]@X 103 3 B 3
+colorimage
+1jU`l=][Cf3)q5-#XT@i,qp\q$PO-u%hp9I2C&tI,9@[9'Gql9*=EMl)Wp6,)(:LEc4:mW1]RG;
++X8bgrH^pK(OZ8/+"TH%)*U/9.4-r;2D['4.4d554$Ghl4?Gha1df\JH7a&<=#48E<?t`R65Vd1
+0IJ:W'+uQ$'I5Rp,SUb6*Z,S*(`jnB$PO'ik3*s+.#n8P%id\fs8G/),;RUDH:AYdI/hM7/353t
+5!1JI-8n(H1GL+'/2B.G5!D.m4$bVY6ddf;/T4cn1LW7C,[(I?(cs#t-RfE:&gRu%,W7P+'FuE0
+(_dZ$*[;[5'+c)EkTLflNW797*'?%Wr]MDL1=,oF7MZefs3Dc<3[kq14>/-12Es)U0dA+u1,h9Y
+5!D(j5r(8adR,)d0EX37-mB`C%0-P3"T\r4#64`("onW'#6t5/!!ri2!!!')#m(/.%gf-/63%!B
+nDO?I$P9`E:B;1<J,*aX"p#RZqu?^&!!!63!!*''$NgJ7z!<WH,!rr<$!!3h86QZdl"#^3/+s.:(
+!!N?+!=Ao6!!!!'!!!!(#64`(#mLG2!!3?2!Wi?4$)[Mb!!"kFi;`ic&@MI4!>Pulq.Ka4!>rcQ
+!!!9)!!`l3!<<92!s8],!!!!"!sA].z!Y_Y&*tBt,2?G9N*tA_["TS],$3LM5!!!3'!!!6/!!!!*
+"p+c)!X8r4!WW`;VYNOY!&X3(!!!B<[J`l%'aoNeBE/5;(rZ=P!!iQ)#7CM4!!N`4!sJZ)!!!$%
+"9S`+!!!!#'<I#uG7@j]-3>;"#QP#."TSN+!XJc/!=0#7z!t#&/z!!*'&!!WF*s/5o"!QFm\!!!!j
+s+p^_!%Ira!!EB(OT.<@"98T*!WW3#z!<<*"z!!!!"!X\o5[>>98%:0/a![%sY!!N?+!!!0(#QOu.
+#RUY6!!!!$$3:,,z!<<6&"oqd*VuQo#`VLh[!!#UjM#[k_.K@3a"9SXcs#C&^!!N?(z!!!!"zz!!!$$
+$31@>M$nM:?3DSV+:\YW"TS]+!!NE0!!E<.$3L8.!!!*.!<<*"!!!!"!!E9+!*K9"!!<8@qBQ%@
+!(m3I!"&]Ts1n[<!s"G_3<00^"TST(z!!!$"zz!!*-.!!ouM6R=W4+rW3D#64c)$312/!!!*%"98E'z
+!!!'&"9\i1"9\f,#lju+'_;/0"9<oJIfKHK$MiBf!<</EoHXDD"^:f$!!r]0!!!!#z!!**&!s8T*
+!!!!*#ljr*!5i\A,rQhh)DVX)!!*',!!E9%!!<6)!!!'#z!!36*"9\i1"9SW1!!*'6o)&ju!.Ofp
+!!!!+q:ZD]!!1=9,QJ/T>5P2t#m(50!!!'#z!<E9)!s/K'!!!<3z_eqgf2BO+]1("6d!<<H,"98E%
+!s&N)!!3-#z!WrQ."9\i1!rrW-!<<i)r!NW-If"Tp!!!B%g(=>c!R10]!"&m5qkjE#!X&K'!!3-#
+!!!!"!<WE+!W`9$!!rr3!!!#:01,_e!*]FN!!WN4!!<3(z!<<*"zz!!!!"!<<*"!!!!""TXDZ49,@L
+p$Dhe"ouO?9`PP$L];o,%K[*no`>3q!!*')zzzz!!*'%!"?au6NDK6>6$#N"p524!rrH(!!!!"zzz
+!!!$#z!!!$'!/^_<!!#F[m/mUu!5eb1!"/d^s+(4]!Y*lV!WrE&!<<?)zzzz!<<3%%)X_c!.4cN
+!%.aN!t##1!!E9%!!!$"zzz!!**#z!!*6'M>o[<!(?MI!sf)2_Z*=1$NPt^JH?;_%GLIV!rr<%!!`K(
+zzz!!!!"!!<30_e]?X!&FTl!"fbo%3,?U"U+r6!X\o/!!NT1!!!-,"TSN&z!!!!&!"Aoms/c;%'=Rom
+$N^<ArfI0d!%.Wi"TST(U]3"J!rrc1$NLD8"UYG6"9AK&!!*0*"onr9"98V<C]R`?1B86l&J-N'
+)up?M"Teu3$31,-"U>/1!!EN1zz!!!0&%0/WmXT8D8[f7oe!WZp5OT5Xe-N)0n!!3.qs"FET!"Ao9
+!!`Z2$3gJ5!<<*"!<WK0!!rr7!!U#O!F#O[!#P\J&1n>2!"/r6!XSo8!!3-(#6Y#,":#)1zz!!N?3
+!'gLc!<<eAs"+T[!,2@o!!iQOr6GNH!W]"q0E;1T%0-b9#6b8<"onc,!!!!"!sJl/#mg_7"h\1c
+D[oGH+UJ\n,7Y._z"onf,!!!!$z!rrE*!WiE)!s8],!WWE+(uY-1!!#O`JcGcN)V*@U!!*eWg_Kl"
+"AA`N!!!!$!!3-$!!!'#!!!'$z!sAT(!!!Eba^630%SR-O#nRap%LiC<!!!!'!!N?&!!!*$!!!!$
+!!<<)!WiE*!sJZ+!!WKAi:e;n!(Zd8!!!!;e^YN;!>N`4('"gI9E'bJ!!!*$!WW6$!!3-#!!30$
+!!!!$"98E%!":a,?Qj=t9F)dJ&/-8u%0-A.!!!3'"TSN&!!<3$!!!*$!s8T+!WiH+"TST("p,Y"
+pE'A88,%T8!!!qfeJS>f'[,8I!"K-)reUUT!!<3&!!*'"!WW3#!W`9$!!!*(z$oQ-aRL3X,7KQ9m
++9a"j%fce6!!rW1!!WN*"9ni+"p=o+z!!!!#!!!'#!!&)[6jWi+oC<Cl#lqO963%;l5&1N1!!!W2
+l3dXo!<EK,#64`-!WWB*!<<*"!!!!*!!5^*lMi`1$>'9-!_j(G"XF'Y!!WE'#lk21"p4i."onW-
+"98E%z!!!'#!!3-#!0@.J#lkV0ndb^,!4i+r!!rWhCC:=H!"o7r$N^>0!=8`2!!!0(!!NE)z!!!<*
+!_C&js#$5PAcP:%9ai-J,QJ>T"onW0!!`K.!rrH.!!!3+zz!!3-#!WW3#O8hTS!#"no%fcn9\c4tr
+#lm/)$O-S2&c_,(!W`<&#lk21!!NE("Te])z!!rW,8A=Bh)c[k;+X\Z<,QJQ(!#5JC!<E3%!<<*"zzz
+z$31&+%t$kIho>]s)mfQU"TSOLoksg1Ck-@c!"&],dJk[)!!!!""98H2!!!9-!"&]2!!3-$8#GnX
+p5-m1<?*tA-R\s?!#6^Y'`\[D!<E3%zzzz!!!!+!!!!0Hq+1o`rH)YZi=S?!!%B=DZBcRJ8IFL$31+S
+s!eEW!!!$&!!*K.!!i]-$31;2!WW6kVXsi]M9-]:*&o)h-ibLm'dE\n!"Ar0!<E3$zzzz!!!?+!!!OW
+7f_Ge!!!tEs()?6!.4BW!!$hcD*7k+!!1LI.LZ:W!!*3&!=Sr.#Qt,7!!`K*!!,TeoDeN@ada5\
+!*KIu!+?6i!&ss)!!!$#!<E0#zzzzz'!(Q_Po/d+!!#=bL&`M"""AQ;gfQ_\fF\)`!gEF>"onl0
+!!rW*!!`Z-!!*B4%fdf:a8b(o0E;*pS/Go==TqFu@1+di2uk6)!!**$!<<*"zzzz!!!!3X7>58)!W(@
+!($X>!$qUI.=0(j=?XaX&HDe4PPI0B!!`Q*#ljr*#6b)-!=9&C!$[THs59_-!!(-2).ikO"\Si(
+$S_W@!$qUF!<E3%zzzzz!!!Y4n`,lOl5Td(62uZ>,le#rHH=lD4il7f!!!(aq)AQY#6Fl3!!!!(
+"TSN'#mh+B,*L"Hi2&+-!6KpM2BYCO.Qnk$/3jmL#Qau+!!!$#!Wi?%zzz!!!!*#V,lSs7.>18Il=K
+H"@maLn06cPWT9Qg]%6R%00W4C&e59!<N63$3h"@!!NE(%X#J]nYSiW!!`u7Y_=hj+@JCC4Wc%&
+5SO2(!WW3#!!**%!WW3#zzz!!!<2.f]PKnfal%%hBM&AK"'pSV<Ao4:2)Crr<$.!*fJ<!!!*%!WW`<
+"qL\6"TeZ6FhRYAVFX\e#7^d=KebP/6p<(`+"&U)'EAC?z!<E6'zzzz!!ro\s8W,i+f7gA%iBS'
+)FoUSKpIrc$38i\!!!H.>Q8F<!!<6'!"TD@%fcS5!WW^Q^&%8r86#Wp%KWdHBE3_d>QA"D+p(1;
+*<6'@!<<*#!WrQ*zzz!!!!##6ZFSoD/E3:L!l"4CsDqG7lI<IL$km!3#-."q(D9ntl`o"onW,!!!!,
+"T]W(U?DR.Fs[3"3<0$Z&?6@V!/1DX!*g6_!_!;6!!!'$!!!$$!sAT(zzz!!!'*"=O6@q>Y_9>Q=ad
+AW"cW&hLVC#TEaDW9GT4$NLG&V@!;-!!!0&!!!B1!?F1pkPs.W-3.R:!!!!1WY/tFK`G?X>SSFa
+70Xb4!!30$!!*-'"98E%zzz!!3B.-i`f6s*7CF!!#,mMU$DY/@p99)ZTl:kp6NA!!i(l$3181!!N?&
+!"/r2*BBkWs4;E@!+\(i!!!S1=WLHl?j\jn;A1DX.1.7+"9SZ)!!39,zzzz"onW1ZiBq!M$kkndYpp4
+!!5.MBo&&T%00Z.J-#]X#li]j!"/c,!!j/A!#CLms7iKm-NFN)L*ZgN!!(2F*E4Os$9/#`'.3c/
+$6ff[!s&B%!X&Z,zzz!!!!'!!!A4s82YL$S77bN(soa!]]^aLmA#M!*o;L!WWQ5s4n.b$NL/,#S@:A
+(5r4mpnq.?!"1<3,lfIr!6\Lc<%D>`2ulhi-NGS&+pnGT!<<*$"9ec*zzz!!!3'!"-(4qtc-W/<&#9
+:(RC,3:U^=Q2h?o>kigN!"'#3h$sDm!!!!)&I/:OMuWhPVcG/F$S-rX!%\*MbC^1H!0@:>$7I&V
+*!m#e0aS'e!!!!#"98E%zzz!!!9+"'#'np"Hcc)\2o[!!"q(1ben."98E_s.',i!!_rR!!!6(!!3-B
+KBE3q[P%sf!!WE0!"f26G[UusK*ul'O97<H-m:Mh#n.J%#mUP4!!!''zzzz!!iW.<;?Cag9bK3%fd.@
+!&i1\0`D"S!!#([SH&Wi#4U[R!!`K(!WX<pk5XPO0+%[Z"onr0&HDrY@10r)$[2T4"#L?5+ZCAI
+$kk?%#6Or+!!39'zzzz#Qb*-q#'g=ZtC<g!"],12UF97rVm!#!':.N!!!!'nDjQL#64`*!$?jUs5g[B
+$31&1!!rW;!!IOT$c3Ze,\79W!,Dfp"\etO!#,kL"T\T'!<N6$zzz!!!!/"98Eb;+_i<"TS]+!"LU2
+9*t[grrrT=4TDSb#QOkZo)Jal!"<\]q<G\:.gIU,!!X/<"TT,7%KHS2XqkCjAI2*3CBlTu9`QmJ
+'FbBQ!<<*#!WW3#zzz!!!K3!!#/Z8f\?E!!N?&%P?4($39Sq"p>Q$s/uD.!!(dF!!!'#$uEiWlFqBk
+#:ooV"r.+A!"f2@!!<5((18D!#u1J9#;QHW!&4Hf%137>!!!$$zzzz!"K,3!'O1O*=W/P"TSN4/_*K$
+!:^!m";3isY5eh.!8I)F!!3-/Cr?)6^3(q2/-5eU'`\C;&HE:@!s#J/9)qs"=?RcX2BN_^!#ttM
+$jH_4!!!$"zzz!!!!+!!!H1!!N?&!!!W3!"CZo#QP)0anl&@!#,Cd$igb@e+s1c8s%p.jEX%JV+:Rd
+!<='2"onW(!!!O#!5o+8!*'D/4Wl:6*u?7()upNY"p"](!!*'"zzz!!!?+!"B#1"TSN&!"o83%5GF"
+!!`MGqZ$a!'E?bp!"K1]q?.^/OP]rsGsR:`8,rVj!#nN7!!!$"!"VU#`!8p8<=;nl+=oDm(FB,%
+!"]PC!<<*"!<<*"zzz!"&]+%0HS6z&c_n@0tIVj#6;mC!!E98s4Rk]%L(>X"<'mohYlM\6&DF/!!!$"
+)bL;7!!*'"%nH]=LaRH\8HW`4>T=FX2?4m1)[@Da"Teo2zzzzzz!$ad'/6eI?1e@Z]!0lV;!!NK)
+q#CR(!6Xu/f(e4B6682g-R&cq!$OC+_@R"R$76W6N!$nP-[?=r")A*G*#&B2!$Mgk#9EjK!XAf-zzzz
+zz,=,!S>F2<G8H9G)PibO;"U"f#!!NW.b4VL[pu0.X*]j?L+pS)J+Z`cC&.&=D-5dtc"2Td@GnN[N
+CBe#`'EC#k+V#Fr*WQ?F#6Or+zzzzz!!!!D5tih6Q`2f5!#,Etk",OV"98/s"UG+NoqL%4iP\&(
+3rgWP#64`I3a'<2#lk;Z)'Oq@_+m3:+%S^F-43$OD?+\W6O4J3(B>3N!<<*"zzzzz!!!f8'M:\#
+.--?f!!%BG5n!_njSoDa#[Y^Sp!e-t!!!6("TSr2#;,Ip#R:>:$4_+m#QPRK:-TgB84"XM$:,;B
+!-/',#T!X\!#>P8zzzzzz!#GVL8jWq7jGa->!.4`3$ig:grrrH/?H`BAe92H)!!`K-!"8i4/b+8q
+#65)<%W`Bk!#2q<59Ct<67+#d5n\&8EWAH4(BkTT('"@8zzzzzz(B>.A64>:'N;rqYHiHA?!!)*[
+"onp8bQ%7bFqOcT#64o-$igManU:`K!"'&CEu##]'Y"lk'5dkO!F-L6&lJ]o%j_;l$5!7>zzzzzz
+!!!!,W9?#;'f5m:*WQO:s*OeH($b@/bPq(trHJ\M!"0&4"oqs?('FUE!!"Zq#64`4"oo>jpD%?T
+D?<f=>T$*G;?/ol,m+hg&HDk4zzzzzz!!!D*kVE2R1]PfC!")3qHiO-]lLJo;rpo@QGRFKO$O?_:
+!+$0O"98c/!&&L#!!!E3!#.*\'ke7u!`]8+)+bH=!'^u?!u)(S!!3-#zzzzzz!"5ah1B8.Gs3Mee
+$:b&C!!!c!no2eOo'60u$NL/7#QP&/?4ReS!"&]+06RR#!"9&3'JK2b.V'\h'NQ2C"=X=K!)NY$
+(CCKN!!rc.zzzzz!!!!-!.jiU!<N8rh#IEc5l#[:#W^H8hRZ?*A+tKR%LE+8!+d^W!tkS=!"'8Q
+-NF,H!!*65);/4DA0F8R<ZFR3.0*6G:]Lb;$46h7#m:5.zzzzz!!!E-JbE[V!W`#O!!!Npq0<MW
+3S"/d\k=;YpOE5R#ljr*ALsVZ&c`.:$4mt#z!<irNfioq:+[QlD*(C&[!)`en!!jAJ$3C26"98E%zzz
+zz!"8jYp1==,!;P@M!"V?jGn:6Aec4L;9-e$AJ,g&c!!!"1/>N@\!!`K2&/HVn!!!!""V)F'H59ff
+AdDH<?5c6D5U7]s#U]U$!!iQ1zzzzzz!!dT4KE(uckkG8b!'9kYGM_iKrd+hP"Zc=:!!!!+#m_"@
+'Fb$[7LoJ!!Z:tp,pEHl!!U2b(1%#R#Zh"4)FY3&,UXQ;-NGRq#QP,1zzzzzz#BT9c!!!\rp]Ld$
+3qok&hXKP(HNjTV3VSL5!!!?4#S$hK%0.88%fcS2)#uK>+p7lG"i5L#?3+XD<rcPF71_^0-QEC>
+!%@mR!!iQ)zzzzz!!!!(F7"V\!#+Sk"9niepTSkunDaFo"p>)ipPf.Q!"'#<%KI1P!#\6:!!!'<
+!&PuG"98E*_)lN@I2?,g:(^;E1C6#C5S+kM,8(+Zzzzzzz!##?=s-*No!6+s<!\f9+s3?]b39mCA
+!!";BWWr_.#Qb).*@?@_9HX<@!W]c%1`-2m70`h,4)P@Q(L-r8&PsQ*#ri#P&/uB0&d/17zzzzzz
+'*)A=PQ;6o`W#o>0SBB)cB'tElDFU^!$qKB#6k/6!WrEC-A!I9+92ZK!4bWW(]XP)#6;J"D@(_-
+>Q@M2:`hJ"3!2DW)\sY2"98E%zzzzz!!!!4!+,\i!=f+Krr<*SKDtnrO>f/aVZ6\s,lFYI"ono1
+!rs>gJg3r3!!iW+\O\Oo!!#Fm!5:p8).t=,&jm@'*&/rO#Qc7Y3=7YE#ljr*zzzzz!!!-%0E/fo
+!!'e+;i^kWs2,ZR!]0bs"p4i8m]$6e"onW+!!!!.!"B5B8ZNF-!!!N0)oi*j[74dHB.%1%6PN$1
+0e3V;![J+5$8qkjzzzzzz!!E9Trk\p@!5J/)NrK(Y_\`@T1]5B"!rri!WW3#'!!!-%!!!H.%1*D6
+Wt>O9!"T&K`rumZ7V<TO-Y!cV'Ls,t.glUa,RQO=2?4$`zzzzzz"9:+S_?^,A^[tHbrr<#9(]XUn
+r5o3G!"SFs!!!3'!!E9%!"Ao;#n'>*&I&48%fdQh"UqeR)L)?R%!DW#!&4LP)F>&k(,$CG$312/zzzz
+zz"X*HU!!bFUq=`KF4o4FD"onZ'q#CC!!9_f@!"Ao.#64r.!!!G!('kHO!"(pj#65,9!68gmGQUDD
+Fo[!l0`b/j64u!g0,5W;!!E9%zzzzz!!!!&+S<SP#<);Op=WV4qW\%b!!*&p!!!3'kL0n@%0-A5
+!!WE'!">G7#S6t9$9nLq!"/u2a(cN;"%E]B!.Ou'!E'h&&ht.T'd3na"98E%zzzzz!!!0FoY^_7
+2YQt?figQ8l2V"g!<;ip!!WGddgc?e!!!6("onW'%%\4?&-)\;56(og$O-UOHp::\,#^<]&jRLB
+#BL)!)-[.k!>#56!!*6+!!!!"!X&Z/z$j-J1!WW62"TV3miKCPIs8PRs!$q4:#m:57q#:s,!!0Iq
+!!!*$$ig8X/cYkb?4Hr?!!Xd&!"/c/!"65_5>3jW;`$WM5TX,7Es=*3>665S&-)h5!<iT+!!!$$
+"9el-!!!!-!rr?'!!*Q5!)*4JP-b2gs$mFs,kV*C"98c'rt5;3!OV:q!!<30!!"N%!!![=%KH_6
+"t"s&$NL8/$atFI9J[kk1d)I:*a8kj"tCKp!\"-]!!E9&"U"f*!!*-("Tn`)!!!E0!!*-$!=f85
+9Dd\2ZiC(*7gf;Bo`#4#!"&H#&c_n4[-mtp!rr`0!%TZ%!#&ZK!!`K.-A):+!!<3/[K;-_S,cjq
+M@;@!-V.AP'Eo-X)&`Mq!!`]1z!<rT*!!39+!WW3#!s\o.!!"<[o)-@k<hf=U!WXDDrtbtA#jhRC
+$ig=0nHT$r!!!r<AiL#)z!!`f4!!E9-Q&>mN!egWE!+#Y_$oKjh86HN="VV7])?CfX#6k81!!!!"
+"p+c)!X&W-!!!!$#6Or+!$uCNr5+e$UA%"V!$VCB(C:'Im/JXG!!01k#64i+!#koM3!Tlmz#71J4
+"98^mM[-EeK`IVC?3#ik2)H[O=V2>O'+5Zr!?;(E"p4i*!!!$(!WW3%"9\c+!!!*+!rr<$-#3#K
+_O";tpHnu^+ohQY#lk7ts"+WZ!Nber!!<3$)ZXJ0#7UY5!!!!(#m1/1!!njJ#HpBW:a0`k70.N5
+70%?.579RU;ZJ]U+;4t_z!<E6%!!!$#!!!!&$ig8-+[;OSbQ#?o"osJZ8I5A+n+dUs!!(7C4obQa
+T(<Zs!rrH(!"&]+(Gc%^)ZTp>!!3B*"98Q)_a$F_,&J&`!HeK5!-/'($TnMi!&ag"'*eX?!!!!"
+!<N6$!!**#!!!02!!!!B5FpZSs1fET!/UYH#lkG'q%E`.!6kI,!!!(lo+_6-!!E9%$31&B1B9rb
+!!3-#!XA].!!E;>5X/'hD&#J?FTY&4EWA<349JL^2?4j5#6Y#,!!!$#!WW3#!<E0#!!Nc2!!"0,
+S_hQi^_[1TM#U$Q!"JDm'*&"4bl9j,!!8b`'`\=9"98E/!!!fk!(\%/!WW3%#64l,"9?>M&;L7M
+!)il@+"'**#radO-NFe[)?<&(!!!!&#6Y#4!s/W.!!!30!WW?OHd_koGVSgC!!!"_r@A'S!Ta8+
+!W`M>s'5U)!fZk%!!<3*!$;1a!!"VO)uotG5Qq,f#mUG8!8V/sLB*P=;ZLt_-TX$i2`D-m!##>N
+!'pVc!!!0-"98]0!X/Z+!!W`2!!F]sdf$7l1%X&u!!&5]/-H(VjSpJ,!=$:<>lXj+N;"_#!rrN*
+*rmGa!%n6k!!$@k"TSN/#64u/h..(P!0dI^!-TG33\q($2[h&6'*&pN5lgrc!!NT1!!iZ."Tn`)
+"pk>2"=SWFrN(5uo@X*D!0d@4"9\bds!.XH#/:+C!!!(ZpF$"D!!WEF!$M=B/cZjk!+.tp!!!<1
+!!`M[7#`(]"^qCY!GW<[!*BG$#Y"eA!WW3($O$M1!<WB'!!!*+z!$HmJq:^68!!!]4aoDbRP4BCh
+!<CsT2[BNfV>kN8!!7EA4TGQa!!!!6J.)DZ$312?1^sEf$O_t`%fi=lN>\Ss@/tZUC(t4Z=9_P,
+7K=e;!!!01"TSN'!s/H&!!<H+z+G/ADg3jk>!#,CT!"&soneV9,!8[W5#Qt4*s)A#=!dOQ)!!<3$
+!!!aa$ig>9!!Eii%0-M=$][Xd!2;l@)5[RG!.4f^'P.8H##>Lo!%.gJ!!N`6!!!$%!WW3#!s\f+
+!!!!AK%p+TI2W(c'E?2T$3uab(B=I9h>T>="9PG"E<#t?GksQ'!rr<$!#:"m!!3K-";!C!!!EZ;
+N^XHYU*a@f?l;Hj4#f5m%6k^T)*SKt#=&G4!#lORz!"o;4!!!Hf@_V+,g0+^]!!E9Jrj)S=!20?H
+!!!2Vog/i_!/pAn!!!(4r_NUu!!O,<!!iQ7W4X&P!!!0:!<<K^$ig[[-=[p$)+QJE3&sS?58b[`
+4q0mb5Qr,-)\N8Rz&cht4!"Cns^?P[O=pG$-"99bIZN([>T`6_H!!V*L63[DiMt))n!!6d3:]U\!
+"Vq(<#QP@5]GgtR!!O&;!"1Li!"7$u@i8Yl7l*4d3D'`F)'^"_%7CFd"WRL]&d/17!!!!3!<<*"
+%6.h2l2TI@#64`,!%%WN!#,F+s"OKR"krW9"onX]nTk08!bVF.!<`B+('"=?!"Ps?)[$-@"V^t;
+$S`%i$dE?:ZiZ*eSH+BE?iXC26Ol@,2C8be"VhX\#lt#+!!!$"!%VKIh>d,65RRPl$igV74T(iP
+!s#t53WoHlgAaeT!s=kfM['4`=T;_/"98i1!"^_d!'s'S!!EH*!<<]3&Q4IIk%H?R!f@)N!/:J]
+!*]Fj%R;9t-42O4'bV#`!<<*"!!*'".q+q's7DXC$NL/8!"&]gr1F#l!5&7l"9Aqbs%<e'".&nD
+#64g-s'Gd0!"8i-&1q)d5t1hS"9ec+!"f2C;MgLtBJ$RmM?BCLL&bT]>6%##5U867$8Vi#&e>9Lz
+!<<*M@@Q*QoTqfN!!!E-$333dTE#&o]Djnp!=[]^9+:t*QMl^H!!6:&?NC90$ig8=/R&3@7K<Dk
+"TSQ'&HED@M3-k11/^%u=?K>&1+7)K=VOmFHiQtH().hj!XfJF!rr<).<s53eXq=D"98T*!!`K*
+!*]5c!!!,Vn0S,8!5ngp!!!:pqh+qL!`Au1!<`B&!WW3%#64`.!WXip&-)n8<EOf;"2/5#;E$sF
+4AI(U-u]Mr'NPWi!)Nh7'H[;V$P!LG!!!0OGgQ*5T78Hr!!N?&#64f*>5FQc!!D$G-3+#G_uDUp
+!!o+lKE(uR;?(80"98E'!!!'*!!!3)!%r@)!!WI(=Fi^>]jrlr2a^\0:*MGAE!f_^<Xa?U:^%UK
+*rl?M%LN:<!!Ofrd.Gk\IkCj("TSN-!!3.(qNh0^"5NAm!!!#:s#'iW#b:dF!!!'ts(;?8!!!'#
+!!3B*!!WK)/p%X)"p%_+JNs=N'Rpas(2XM+!GNTL"]kn;$kNOs*!S;%.KBGK!!a`Wj7`M^?2t*9
+!!*'"%0-A8!!%EHMZ<hZir:;*!!'V07g8qnNr48-!";?mL]@DU!XB)5!"U1Y#QOi)%0Hb6+US2L
+!s$+NIhJguD%1akBc]tP<sE+B&-Oa."uZK3z#:![;pA_U.!!EZ0!<<*/!!!?+!.=g)!!<5\s!7[G
+!4r/""onX`r-SVI$qC&K!!!$$#7CM3%j2/a!!!!.!sJZJ$31&.!5K:u'!)jc%=%tg*_cf>#%@uP
+">Ur$2?>9-!!!!(,@TX+s0l;7":G21!!!H.!"&]+I/f*)!s%?\,lmuG])G2(!!&&WHisEX7eqi?
+!!*-+$NL/;+:/;R!!!H1"TT\Q!!!*$^f!?]8l%cS&o.c!&<Hlt"uHUB!)X7C"#:i%(/M.2s8BPM
+"U>#->R3#@#QP,>!"]`NaF4*h!<;d!!X9"Ns#1#[!1X"4!!*F!regp[":+u-"U]^&!WWQ-.51`%
+!!!`6"oo@O;Ed?<:I8(pCC#4tO8rPj1^Jp<;%FHF1)pQ8:TsZqrOX'R#64a/#V\+A!!j#6&.r?l
+IK0?Js7Zd#"q&?L2Zj$[S,[[4!=DHuMZj(`#QOi.$@[1#!"&]T0E;(Q!#5J<!#3.F5!V_96<4_7
+#^R&D!*odc#`/OY%i5='*!d<UYP\@u],_%[!!$700Js+9#RpbF&Rib0!!!$!pBUg)$H<$(!rr=j
+s*"GD$;1;U"TSZ2!!!00IWkhn$32M/z'`\F<'Y]SMR/i$VD$k8"@koMf;F)<n'-%<L!%J1nNR@dX
+G"*Jh!!!!B7t20R!!!6+!!<3)!#,tE";\r4$3pPCs83u>!s#P)D?'eD;?)L[!!N?&*tSn^)uqUo
+3u04E!!aH4=TB!5b)RU4!/M;*$?6nm1+FtU5oiH/*!o.9.L'pQdJqgA7NE<G!!"04IhMk`!!`T+
+!rrK)'G(6I(<#&:#65A9r#btA!3cE?!!EL's,%*_"TSNE&.S[[!%tE9(+9._#9--8!"].QNZa_i
+L_FV4E>W1@.POad*Cgb_#tP%G#',^Ns4;E`*>ebV!$Oj^'*8.6#6Or.!!N?:&-)hK`81h+!"o8/
++92KDYQ&J?"9qa'M?s7d!!")P%KIIK0!78O-ia5P)b*s1&-0j)IiWPJGU%tJJH.M6JH0!h<<kW+
+-"WXKqu>2:!!N?+FGLS>!!!K/#64`/!!!9)(G'-E3t2?-Kae"d3:d(Z!!<5>s'Ym/!*]DR#lk&-
+*WQ0?$igho8K.g6!*V>^#UKHZ)9ja_*HE'C,DQJS!&P%6!+$:<#<WtPAY#q"s4'U>"TS^JL_C3t
+!"Ju6!!!6(!!iQ@/7j/i%0[H"%0-Slo)B1"!s$:>@/p?/>5s-[!!<3B!!!!-!"^nW)[-6B=uZKf
+,le>kbq4DcEZ00ILB`;01^\d6?4p6C4<,YYSZM_geOKTC!!RJ#'+FpA%KH_6!!`K(#QPYlAU?KJ
+"VcY"!!YFRrsf#2!6"nG!!3.(s+(IV!rsAB!!!E-&2Hfr"T\U,2uj41!"9ai*fUl!.:4f905N@-
+<ZjOZ=TCr,WIaHWTfN2S!<iH*!**t<!!!<T<<*"=!!!9)L@YB:r;YMk/H>bX!`J.E"9AQ(fDeVH
+!!$[3E!?:B#ljrGR2u>4!!<H7e'3aZ"9M%"6tOI]N>.X,?SPk?Cb\.T+?_D]!(Rd'JaLLO3WT3]
+"TSW)<H%p<!!t,T!!!u=!!iRZo)J@[s4_NF!!!?-;W[-G!<N8Qs%`Up!,)=N"onW0!!"%-*WQBE
+!s]7`c&)r5!_*MbA]Z!Q'U:+S0jZML0gA\]4YU"=7hr"SmDkn]!<<-(!!<4$Du]k<#qApT!#tt=
+#QTVMs7H6hgMneF!"&d*jllmK!W^jP:B1@pBE)oT!!!<*!$.IK!!WE*#7T)+M@B[i7LDOpac[^O
+%@%u^"KqfE#*]+3+&bMNjSd,7z6JT$Tz#:#[C!<<K-!!3-hs8Tr`?<DHiqqP`_"TUadW;m##!:9PC
+!WW4Gs',X+!!!c7!!!',!!#6X)$9jN!!"O_,S:<iOrgq=Pob;UY5iMGPQ5nL;aSairPr[R!!!!c
+gp[Lg!!!!(,FVm=!"/c,!WY[hs2'.i=Eqa\ggpHh!'^F^!!<3$m.raE!!%<E>QXs+!#>P7!!3H,
+!'d1q!rro5!%Y`.&I>e-*jZ<@*de*o!,r.,!-]M`6I"Tia(kYT!!#@@[g)m5!!!6KRU#po$NL/.
+!(Hqf_L,ZlGf0F6AH2l656%S^!rr>fqDnZX!."TL!rr<$('"=7!XSi,5GB"t!"f22/%m2?#dn_0
+G<elL:g+K"4`hcc,f7grl``AL!!WbBqh#pm!!rW2%06Jo"q1b;%0-BXl+SJK!!3-#"spPI>7:^.
+s*=YJ!!*&i,ldoLN;lQR!rrQ+#QPYQAL7le!rrW2!#u(@#ljs<kArG'5YZT%=qX4dF<>KJ_ThW:
+YW2[`"pqs>K,t-q#lk5?!<GCh$jZhB!!%N5^*X$a!WW3)-*d,I$jK?(H2n'J!<;U9!!!4^s%ELs
+!!`K0!#H5Y-4U"X!!rf/*!60I!!$ZpF#/#*9m]]?&k"m)+)rRCc11,(3<0$`$,$.f*WuHL!!j#7
+!C$bs#QP;6!.X7I-3aGO!!!3LZ1V<0#"noA!!E9%s7.H9!!\D^9EP@s#65#0(D14*%KHS2#mC;K
+!rrW-!,(I.YS*<K@K;]3G84Y5kkrkX6N@*X/-l4X4qmu,(I2X$'`\4<!!!$"#lk*\lC7nU!!!''
+!!!B,@J>`]GkXW,!rrN)mMGp(%@[;b"UG)8!!WWC1LpIc!^^o-!!!!$!!`T.)9ro"&ssqR!1"LH
+'kDRQr6g$]!!#SA#QOrj'EAUZ5\KL"!!!3'!!*'+!!Ir>S,rZj!!39'!"/d8pPf/tpI,&a!!WDj
+(]XOFRf>bZ#QP23"pPi!A,lT26?3&+!!!*$#6P&Gc4dDpQm?,@Q5Ol]A9d>9dXFO`!(e^I!!>D!
+!"Kf1BC6K7!!WE'!<<E+"G?!0!WW3#!X&K'$NOW0N<"4t70!Di"on!-!!!Iss$R"r!"&]1"r9"*
+!!!'eEW?(>!!<3+!s9Fd?Wp8b<(MHMKPJU$_PD#n!<@N[S8eN:!!!E-6dqM-'`^5u2:WND!!N@3
+q*tSi#QOi0"onW,"9DU'C]OJ@!"T'&s1SIF$37j@(^U0M!!!3\5l_9!3=T.u%gE7=CG#Sj!s%Lk
+>#7.W8:D/(C<6(bUhq=W!.>HLE<$@H!"8ipe!gIT!'(6@eJJ8d"TW$-7g/r"!!!6.!!!0*!E]8:
+!<3<)%ff9&^&S`P!5JON#lk>5!!Y;H!"0)n%9d'K"pY-D/cZ%W!9[]m:cD?EIM%6JaS!EGD'K&]
+I1_uh!"/c,$iiZDRfjH+3<h@k(]XO>!+Pao"Ter0!!`].!!NK+=8m"9rs/T8!)*@+!"fP<^],,W
+!"/c,"uS[H$OJg&>$_^D#68Nl!!NH)kF`Tg!2ULHBDpYu9`P/#4_:O]*[1Ra(0^h?!!!*$#660i
+>9b!c'aap]m;!%/!<<9-!!!3+zLZCdO!WWB(J,c/C!!!#Mk5bP_!"o83%fde8N]-q<%KIJ7&m#&=
+!$&T1TGFF*V&-mZrS>([!!!?hAZ)%>+ohTY>64d)!!<3+!%>`h,8gIr$32+6CC1%B!!NQ,!!WQ+
+!!!"Sj?e=t!!N@Ps.BDn!!(U5!<<*"&c_nB!$XLb2ZNgf!$"9;<r`L+*4k1'(8h//(VaV]h7HA]
+!"(l#VjneP!!!d=!WW3#!rrQ+.)T76)#tBY!$1HB$31),"U4r,"p=o+!!%f86@T%:"TX&PTE5)n
+!7p<6!!!!3!!!N0,!1fD!!!K/*'k3=!!iQE]&QV()2j46rS2c1!!"0jWn7mh#Qt,-(Oh\m!"BPH
+!!rc.'EA=;!<E0#OK&9\#64`(z!!*<5!"YF,#Qb>5#LNKM!tPPAlbN]+"9\]3$=GMV0)umj"b::k
+%KHP7!bG.C[npoZMhUHpgjBS3!$QcjfF\Ap"98E<I[;,V%2&pH#m:5B!!WE(!<<+]WW3#(zz!='#5
+&!sg4!X\o4d/R&I%g<:*_#siC"98c9?nXu&!#bh@J8#2t!!3?+APX)N:i.).L$JWlHk$,V+apBC
+&I8XF!!!gaQQH2:&dSID"99,9"onZ)!!&+\!!!6(z!!!!"#7LSCQamA'$31=Xs&9(2"UXM2"9Sc0
+!"''@01ISp)?9qkBa,%I!X8^;:DUF[Wl=2qFq4fX!"&m@PU$5A!')tB&-)eD!!<3$%Kuh9%KI"I
+&HDe3CsWdp!=8`0z!!!6(!#YtnjB)B^!&!O+3roBg*9VhT!!!$*!!!o;%fcSD%g+Br!"Ao_rD3Io
+!6*!Y`T[#=%gN(7$3b"*,QJGW3B%-R!!<c4!rr<2"TS]9!"TGL!!!%9ck6<Z#lk,/z!!`K()$V_S
+=9&=$0'Vmf!<NNHkC<[8!!*?*!#bhJ!!!]D""b,c%0/-]:]LIq`Q,!tkk901#64`2"_EoD!"o8l
+2[0fn!tYG7!!!K4!!Ni4%grsL!!-o_&c_q=!!N?&z#64`A"tnt=!!!!Ol1$h9!XKe/J-5iP!=/Z*
+)?:9J!#,qG/J8$m!&=FK!!!#<s20(b!!!"#]GLVW!!!!#!!Y>@!!!]5!!!Q9!!!!'!"/c8!!!!*
+#1m>b#QOi3!!EK+!!WT,%fcS0!*@PJ!!N?,&-)_2!*0&)#6Fl.!!!!%/cc7]#6Or+!"9)4!&OZd
+02]Xe_g#>b!!$*5(]XsE!!!'#"u\F@!#,D5!"]D9!!!3'$NLS8!!!<0f4+dd!!!?+"9ni+"pFu;z
+=4%!J"TS`<!!*'"<W?>0!WW?'!!!-S!=8l6!rr<$$jQb41]S%>;8`FOGZk(I!*?fM!"8i-!!3-)
+2E1[:'EA+5&-r79!!WE2!"8i-!!rk]@fQc7!"&]/"onW-"TT&5!!!"#d/X.M!!Wu7!<<+"s'5j2
+!!E9%!!FnT#m:J8!!!!-#64`\!"U_[_`\n>.l;p;(1IdS#SI+;$3gJ1!XA]*!#>P7"UYG6!"8i-
+!(U[NK"1hc2&HQ"!"&]+"pFu,"onf=,WK];R::2>)[6`Q!!%HI9Ekb&#ljr0GgQiu!!!3C!<<*"
+('#%0&8`o34W4AP1k^c&@LiGE&c_n="onW)#64`(('"=<$3gJ1$ig8-7q[:&\Goek(^C*B$31&1
+"TSN,!!Nr[3,\P[@WGTj"q:V6!.Fl@"pb28!!!4Jd0]jR!!XDD!!!!7!#.I*D(<:`)?MEGKSpUT
+%fckJ!!!?1!!!'*!!!!7!!!00"onW3!!!!hB7>HBs'.Du#6Fl4!!!3,!!!3'"VE">DY]]0E`j=c
+%0?M0IK)tF#QP/2!![\q$31&+"rmXD!!!c7'KQeB._ci[@a>X5!"0&4/>6qg!rr<d'EC4R)ZTj<z
+!!iQrYg<@.beF+[^rb-]YB2`I#ljr-(G:<HbjDgkVZ4`oq#B0.0E;5CPSO6!!!!KuC]G"_!%AOl
+GnpA]!%M7XI/j6Ndht)RcOkL($O?_`Tl(2>!!#7u!'?,Yzz#QRH#ci;tJ^Ak@Oajo.LF>tEM!!!*;
+/qUISmBtWEs2a'ls4rSe!!GZR('"=7!"MJ7!"]qH.2$3;('"C9.U<4+!!!2O))l$N&UOKc#QQEL
+D@-IG!'h4u4,b*Yz!!!!)!(jE@s5D29s/s/Ze_@9L3$AS.!!=#iK!`bh[FqGWaPQ^lh2<re"@JChz
+%Rt77&/P<q&nQ>(!!3-M>m5WV!!Uj(X]cG>$NL/,"ooAD!#,c7p*:Y$/H?%[!!!0*!"1+4s1E[u
+!!G=>*WQ<C&l=G.m_)Oq[GecH1&r$h!!2dQ&caM?ec+Vf!"o83#64l,!!iQ)#loSX'+"XF(FsYo
+$NL8I]^OLT=qq#F!!!!'!#5b>'FIS.,TS!Z!!i`.!!NK*$ROg4]R(Uu"?G?\!!E97:l3B`]i.b8
+iOjRo!#5J6!VSJc!%j&Xro>s;&c_n:!!E9%#QOi2!.t7b#lk8J.s=/c!!=.Pn(=aG'`\UA!!!3'
+'aOdR$;L4>*?Zp6#R(2."U"f5-0"s;HQ3"g3StkX"99'2M9G>#;c'm\]R;O8'`\47p,EZb/W&$W
+j>HuN!!!6("98E-!!!<*K)cPk!!sGlG!HE8!uei@'G(6E*AP\_!!<3'>8'0:,QJ8W!!3-(#64`8
+!!&Abd6S6B!!`M#H4Bo[!WW3%$!bsHl,la$z"TSjbNrT[j#66m3s-!E_$NM(F"oo,5Oc9>A"or:t
+"J$D4!"Ju1#scNF&-)\N1!1dB!rrF-'0X2X!"B)3!WWB/!!!Q1!13]45n3kp#6:TH%KH_8!!!',
+>gr*)b"_p:!!!!&!""IB!"T&7!'JR,P5kRj!#bhA!"K!kN;rt`!,%ArSJ_M0%KHP:5fXQM!!"#o
+as@#i!!?F=4i/HE%0Z_5!!NT-!"],1Qi>Au%KHJ6!2XuO!!`Q*!!3I3e*ZDB:&k7o!!!0&$&FWB
+%fch74O3tj!!!B,)?9sA%KMWN!!*9(B937e)$9jK!!3Hl`tF;'!<<*A!!"!9HcB%c!!t1u#R1;0z
+4-.DIM';p"#64r:neV9/%0-AnO4KXm!!#`ZeU&,7"TSN&1UR2_z*1m,.@/q#B!!3-#'EAFA!!<QM
+(B=mR!!rW9!!!"s&rTB`!!")@!$"j_``3!=#qR/("p"](!!!!\O2gLB+ohTJ!!Wl&(B=RI!!#9F
+esB,3!)8d0HPcef!!!!T[/^1,!!!!=T)GWs!#5J6!WW37!!r`-!t$+d!"BA;#lkJ9!!&o0Mb='N
+!$;1@*)V(&<<*"*/0>-%!<<*"!!#*A`p8I*!!!6("q:&=!!E`2!'lUrQVIM\9pX=V(]jj@!!"g_z
+!!""1rMa3*'`\48!!!]5#m1/0$6L&a%1N:D!"T&0!2iD4,RXtm!!!!tE<uaM!"/dkJfk$n"TSf>
+55=gHs',O(!"8i-&!R%o!!#6YXb-TR!<<31!Y(m!KJ3`8!!ph*!"&]3!!bCDs6f5c!!rW8!WWT.
+%0lkB"!.GK<Xo*6!>Zq5iCS5=$O[RI!!#r;#m:>1$NQEC+92BF!!j-"q"=I_>Q=a($ig8<PQ1[`
+!'d6\K)blP!!<W2%AKVN0F@m^#gG.*$31>3#;tZDmd+Nc#lkG:!"/c9#6528*WTMI%KH\6(*kNk
+8TuEf$PEF>!)mkD"9SW3!0i'X!!!0&#S92pp%eVm!!!!-!!!Ooz5GP?5!!!$"!t55?U8*Aq$3L86
+bqf>,!!iQ02<Or,lt-5(!"K&1$NLV@!"B#O!+&\9!!WH>,VJ$U+92CRGQ89T"pY,T3<09a)#sXD
+!<<3*!'^Flec3eq&HW"6&VY!+!%X/=@KZZA!s/H&!<N`2+/6S^)ZTl*C&eM>$31&`eBR^eh%]o'
+!Z*Pg0)tt^(]XpD$kiUE4TLa+!7Loj!!$VU!"],7#66)2!!`KA!!!?,!!<B)56&+Bs2tNW!Wi?6
+Kkgqo/!./J"98r7!WW3$!Y,2PU;:@Z!!&C$!!iQ3!!"n+c1_1n'`\mK(GMa?!!!KG!"/c8'*&2!
+!0oJCdf:Kj!+pHU&-)n>!%']+#65VA!"&`,!sJZgs0pPYb6/CY!WWgdCBsnjOL8O#!"T/5!!!$$
+%KITF_.4Jb!17L$#QP23!&`9NpA`q`!##DM0W-Q(!"KhG$NLSK!!PLcPrA]l*<:#BG=2]:!"Ar/
+4),!#"oo#6!!NN+!%Mn%VXfu)1'IXX#n56.!2/"T!W`W.!!!!'#6Y,/%M8[@V;bh^3h?<O"on`G
+I2\RM]'Voe!!!!,z2#dm_!!Ed!.HVKW'EGT_!,n*G6jNbm%06GjC'O_C!"/o0"U+l+.W6'!ns%f_
+"TSN/%+6F%T\3fV!=Af,!!!3."9SW6&HDg-ia2[HScA`p!!=6i)OgK5m6q$U!!!B,!!!!UrsA`+
+":ddJjr"UB!4NsKDj5H6#QOi6!<>2r#64r.$NpG5"TSNPD\]/?Ph@eq!!!<6dNnmdfjb'a$31&+
+!!WZ2!rrfC!!&kT?N<-Y!!!3'"!)e.ReaP^70*Ag!"/c,!!"kU$31&/%RV]-)%@8[[n?]9!!NT-
+!<<*"%g)e3DTrjq#Qb&-#mLAnmU1Y%s%*4k!!!#U4OA9_!!WE'"onl.!!!!+z!!+I"kT[t_!##>4
+!XJP,555"[!!!i9!!j(7WX&S)!!E:mI/j`d!!!#=9)o\,"U>#.!!!!0!rr==bnL-`!Wi?."opjT
+@"R268HAek!!(k<d!$!#"onW-!!`K(!!!?+z!@NN`,/kB!'*&"6#PkYhp\e:r!#P\9#S*l7#QOi)
+"9>!@!"KG<!!(#3!#5J;#64c)!!!N3!!$o]'EAC?!WWN2!']gYK&$At!<<*"!8]ibG7OZX!!!3'
+#64`(!"&]+!!!!"-\LV,`>ARg!!!'*q6E3YrEB7%(]XOA%]ZN7!!!!%!1eN<%LiC<!6,EI'*'Am
+PlM?q!$hXR*cNY=#mLA4"98KC5RZMt`T7:(%KHT&os#;Hz%1ncAgALW`Ui6;K#QOi)&5K,&=9&=-
+#Qm[7T^(n,+9MlL(iA7X,R4;L%0-A7$NL5eM@BOfb7"@a!%,CE!"],1,QeApE%DD("onc/!!4-*
+$fKFOjTY\p!!>gcYnn&R!!!!.&<t)dr:S(*Du^UY!!!!1:8\%n!!!<2"%j?%lKm[V!selDD;lfd
+#64`5!!!<5!!5*:%0-LR$igq@-G>ZE&-)\U!t$)g/.;gh!!EE)!ZXH5i6fO*"oo,5"%i0j(D?cK
+!!!H>Pf)5Qou<eH!#5b>!!!R*VZ0`u!!ro58f")bm,oJn#QP]YiZocS!!!H.!!s#5!]PuG!!CCE
+$ig;?@1iP?"&R-O$igA0/-u:X!!rW*%0h/d2XbD]!!!-racQl0!WWE))3Xjjs7QEloDeI4=TAF&
+!!!!9]YQr8!!!9*CNiJ2I/j?Q!!!!8!"V=)$NLY:!!EK+6;7F[$b66G!!*[?&c_n6:s*>X!!<3P
+#lk#,#ljr7#(']8mqVn'!!H$<OU2!h!!WE@P5=qQp&G'`s7FfD!!!$"!!!kK_*\2&!!iU@G>-tD
+!!<B)!!!f8%mUU4!"Ju/"9nim9`P/$\H!$<!>/`Q!!!*tb%1t]!rskY!!3-,!!!H4HXA]"CB+>7
+"AR"##lk#,"ooO(qY1$_s8V]jo[I"D!!*'"!#WAb6N@)d#Q\^b9]:C"!sJZ)!#GVG5Rn/%%KHJ3
+"opta!!!D;J2[H.!!#\?#,jg8&-*"?At0>2'*&19!!!!956MK!!!4-PZ0<tC!WW6$-bB?Xo`+O_
+n,NF`s8R``!!!9)$rm8R;?-\(!!<Es8-]J%!"8i?!!"+\=TAO(,,PYH#QPD\"0V<I2ZNgX!)+aE
+W'MdB!!rg@S.5N4!!N?&!!!j#":kS7!ZYgWkqN/>!!*'I])Vg&s7?9Zs8Vops+Cp`!!iQ5<<(<C
+!!!?+!sV=f#7:G2$ign?!$B3`!!<3FV?m5.!"^@WY4[<(z9IC%C5pm3D#mFq2%KI.B"TSN&!#Rp'
+%g)e5*+lJ?0`V7T!<=LYs8V`koDe:Zs7u]pKFe+`#QP94s3OXD!"&].#"_>j$31&7!"o83+3%F`
+!rsOB#lk52&0h:[oa1[!!!@E@L'ACn!XoGK!!!W3#Qt,?!!!c7-MKe1!<`CpSg2nu"pP&/,K9]_
+kPtSTs8W,ts8W,PO<+B1"TVQ<,ggTE!!<3Pm6L^P"98F*"p+r.*#&BKIPVoC!!!\;dKj=X$31&+
+"*XNq"r71?$k!XI!"o8;"99&7!#>P]pH\ua"9>'c,M<P2"on]L`W,u$s8Vcls8W&ts8Uc6*WQTP
+!*-f[d;]d!!rsn>5l^lf!!$1,!X/QD'ECpX1E-;o!#)Wc#\*T:!!!!$G5?pt('"CE$P<@=&c`1?
+!"o83('#]U5m@>m!2#i-fa\2j!!4Cas8V9^s7QEls8Duts4NJT!"9#2<PTm-E=r6R!%dM'!!!-%
+!*TR."TTMV!)J&")ZTj<'=#sk@eg'*#'u4A!=/Z*#Go?C!"T88!!!*$!"')6%KQND!!*r!FpJ<E
+%KHS6&'<,/qZ$Tqs82]es8W,us8R-B!!`KkU^7a7Hk-2`J`R"9!"'/fAJG=J!!%$>7P"N>!"K56
+!#Pf[o`>*tHAiL<#QOi0V8NQ<%gE(8!!<3$$4?hD!<6d6!>ssB#R9o2!!<?7aj.Nps8W-!qtp*e
+s8W)us)S8B#67,e#o'@d%fcoejTGVb$4SV!'a+L:!-/'//-#YM%L2t6(^"mQ!WWFNN"Z3t!!!8#
+`!-2P"p+c)!rr<.$NLY:s(VN7)!5uI#4rB*!sB.VcF`rQs8W,rqtC'is8N&uEruCI!(3Og'WHHj
+!""5<"9JQ1%5)3,"98E%EWAQ[!!!!/#64`@"*F29%0d=C!"oqU!!!!;!$T!r!"BM?$3C2-#lkF\
+D[J/CDZC"[fDl3X!'>&nhk$&)j8\HFs8;0[rr<#J;#gUs!6kKD!/dTh!69ip%KHJ/!!<Q.W7jgO
+&HE+>!"T&0&c`+R?Io/d"qL\6&ebcU!!!o;+hVjr%1rRI!WW3,!"I7m$89\C!!aCo!!rW*4)OfN
+Ss/j-s6K^br9F4Zs8USG!!*'"bl@_DMPV*ha+jX)z!t#%,g.>]b!!r`-%fcSB!!X<If)Q6a%fcSB
+'+Y'C!#bh\]Q4&^&HE.>!!!<*%F8r"0@"J9#8u.o#ljreD>E(\PP*u9li7"_lMUY]s3smG!<<,E
+!!!"VV&'-PLB%ea!!!!$$37$Y8RW22#m1/<!!!W3"rUb!"98E/'`^.H"pP&-!!%.c5QCca!"/c2
+"TSf9?g_73CB+V?.aS/$!!#mOJqq=j^<cVtl2Ue`qu6!_s.',i!!]V2!<<m^W$:&,"onW(!!!$)
+,`kq+!!!LoAHr59(M=ij!"-7>!!!?@!&fQ9"onW'!-NKNz$NLA7!!is>mU!J?!!iQSci==O!)_O'
+LW.QQchY`Js8W,rrpBacSH&Wi#-S43!#Bp[,2H]4!!!$"!!*<MOAc2\!"P9*#6=f@B-70S$Fp9>
+!"'G@2MMD?zFa$(N!!!!,!!WT,#Rb#-?FjnP#QQ@$!!iQ);;?bY`Ql3Dq9%t%s8VuqmJm3W!!!!'
+Y6G"-(42u(h-pQg!!*'"!='m3;ZZq!%[CT1!<<pK+92BK\U'Jcz!spDe2Alo'!$i/ug_9`!!!*E,
+!!)W[E!QFF$;6<g!!*mP8#*t\QiFRtdJre)s8W)rs8L(Y!!3_U%0-eB!/Ak0%0-S<"998B!"f2M
+!!iQ-3Y;?2-SfBK!$4GlHB]ZT!!!!$#q9CC)%6KF,SA/R'EAXD!=Af,!;#]!#QOo598jA]!>fQB
+UVi%Ws1#2Ys75RWs8Mrrrl?#Y!YEQb!"9,5L=!C=!!W]3!#Pk>&HEaM#QOug&HEat12.@$*^T+<
+PU$5/!!!*-.:b=S$ig8Q&]rfB!"T&1$31&+oC-])!!3L#N"5mh(MlU:_i0r^\?40Yo'QJWrqufq
+a;Y*\&BkR`$jZifd'jGa"pb>3(^0mO!#knD!!G=p!#m:@BbCCe60llU!#5J6$NL6b?5`hF'--\-
+==4(K&-)b3'EJTWdg-3[#67JZ!XB)59sR3!g=_/9q;TQls8W-!s8W#^1B@IUXVM?G!"Ar&O8o7m
+!!!E3!#P\<`#]!r!!"DLRqVj&":P83im9R`'`\4A!!8!`)?BjP*;,Fr-NF,X!!3-7!=Q]l#RCG9
+!)8LU#7CN+Z:/?YfnA5Xil_&rs8W-!s8;.<!<<,%((C6D%06-a!!!T2!"9&3(]XZV*Wm/X!%7r=
+B`J,9$ig@gco(k=!!!B,!f:5%!<EiRooW?(!!!Q1!WWo8$c(3s#QY/19of>\$NNo,7:k3+K\lOa
+b4u#:s8W-!r9?'=!!',:%0-A;!;DQT!"f22$jH\K!!C.\!u:k:-j,rQ!!!-1!!;-[%0?MP]!__A
+#QPS>!!!3'#lk/B"onW'(B=ffGI`&#!"B/fJ,f`Q;BeQ`QWLs%ba.Simd0uPs8DNgs"j]V!2(nD
+$3:->cDu@+!!W]2!!'9U!!`K(@*F5D!"f22#64c,#/gKN!WX@S[KHR9!#5J6!!WE0!!X&?!!!!8
+!"."q\U+;V%0nV<!!N@#,":4P=24dZQL">6m/R%arUU!g1]ROVTIg-N!<?cXX*kT\"pb;2!3q+U
+#64a3b_!n9&HDe9!!*0+_uL5J!$Jk]"98]-'`\46"onr0"qh+?!!!f8$I3k+HN4$T#;L`/"TVFE
+7G=)0^]2NDlhKo7s8Duro)J_H!!*(m/H?+Y!,'TXI1cMa#Qk&,Z%;r\!!$ENK#dp(!!!6(!<WPE
+5l_OpD-%k\"U8;V.KBGK!!!VRQ3[Qm#6=giS,cLc&c`1=7Y:sH!\88"-$S1L8@J&WZhaUVr;ZTm
+qXJ"p!!&l[!!!!?rui6(H2n6O!!3-.!!io;7I#m5!"],J6i[8o!"$&!!"u/G=!7PI#%#J&z!"mA>
+#Qk&3!<ACT!)re.!!iWqK*VGY.rf#EGMTJo[dffmq>T4Js7u]knR;Iu!2_p[!!")?+W/IM!!rW*
+!WWT.#RUi+lAbiE&-*S9!!3E+$+3&!&uKMI+TMZM?HXeuz&^$CF!rrQ,!0s&S;u@7.#QdJJ#QOoV
+EFL5<h69GYnX?f[rn[MPq>^<]@K6B.VEOt[!$;.`(sR@,#ljr,!"/c4$4')cNW9%j!#\0)!XJc4
+[G`k@$Od"8#S6t="TSN8//S?e,7jhT!!!"1^DI[gFf?#S"a5.k!!!$".&s4BG4(QJb4Nj?s8VKd
+rVu^o"p4jU,R=A\["&St:X(^&!<<?)"=&[%!##>4!!$nc5+k[O!!*)HiA(B@$ig85&-)h:!!!W_
+(]XO\&-)\1!!$TF(_m0rW=o78G'O&f!!*'JWi/a;mZW@IoZHCts6]jbs8#_"!s!is#QPCBJ.3)d
+bqo_-!!`K,,DQ7!'*&"4!,d6LTMGOf!<CL*1&q[j!!!99!!EH*!"ph"!!"5Tz!+in^'a/ZY'*&2Z
+GlRgE!<=OJW).[*PD.0Ob38m*mJm.bqGd_%!.Z=#!"ZGe%1uC\1^O0_#64lOLB%;fzDLOdB:B1@q
+!71rN!!!"7kV3&>"p"uHA5`I0/H>bN%LWIOohu1t!>*t#"TVh]!"&]H:MCjqU9lbhn83dIp[eFV
+s8N#t.KBGKSeD)/D7gJ]#6:40!"8i-(]\6.&HVq7(B>_OD\<$T!'jH_W<WD'!!$fu0`V:[!=0NQ
+;ZHkN!!!!/$O..7;[NL*&DCn'!*t6X$32)BBc\OoZo#DaD1_<PoDeF^rr2pI!!!"j'*&8S]Fk2L
+!1Lb)$ig8E!,.<'!WW<=!$n+R&c`.:5Z7Z^#64`(!,LdQ!!<E+#T.)N!!4_P!!!K:"qUB*$31)<
+g1pil?%`1b!$+jL*[IJe1qW6oK(8U,s7?9irr4GJ!!&T(!!dAR&c`.:R_f%5!!!i9BT*N)!!=#;
+,b8id!!`Kh;ZNcs#R1nA+9qlJQQcS7!!!i94H_Q-!<<*(StuJr!!!EGh*_61C&e5:(B=GKF;%O#
+D/fOSQ,*%ls7H?XklUnc!2^\961,9a!!!!?eN3g4!!!98*rl:f.0'>J"TSN(!"kin'<hHB"qgnY
+#64gl+pA#J!#P\uOu3LG!!!4pV#h#)!"9e%6i]Sh!!!-<!!$\S'2d4qE<#p&_"@[,o`+:B!rr<$
+VAfP%mLT?u!!"(j3s#B^!!j)W!!%?p!!!!&!!!'#&YGR,YQ+q5&ca$Z!!8K2"TeZ((]Z[]2$a3_
+!!]$k!Xeu.$l[qi!(1K$!!F)<!,-Hf;:BB$s8J;!o`+s`s6StP!!!"r)Z`7m&-)\1!$9ZP!WW3#
+#S/!W!.--p!!!0&!!3-4T:?S!9!U/U!!!l>F/2JC!"&l0!$=K1"oo&45j&UW!!rW."'+J94,*_8
+!!#Z'!'e4^@b'XYLB$SVnGi"Ws-s&l!!]M/;qWo,#R1A2!(Z&Z!rr<$!!!'6V]>aX!$I"*!!*'"
+#lqM.Z7uO`!#Yo\UeDF%$3^D0+$g&7!"8lnk7.Il#lk)1<TYnqL&_2R!)$l'5JKBke`Ue(s6IPk
+s7$$fS,`Zl#-8#-feNR6"p4i*8)k']z!!3h3*<7)[+GL=*!<<*+!4b_-0a7UX)$G#V9G7C5"TSNE
+5m7Gm$irWV%KHJ8!!EC(jt8`Mz94\)f^HQ,WkA>tRlb`/knG`HX!!E9+X9MVV1'%Xb!rr<kisl.kz
+!Y_IP!$)%^L(++`!!!<*\GuUA!'_eP*")`S!2.7d!!i`.!!N?&&'(4@!!`K;!!EX)`Di!#!!3uG
+&nF0+HFR6]m+[E9s7?3hqYr5L"ontF6eFO%%KQP>!!!#oC^LSG!##>4!tcUZ%KH]:$jR.?-b#Sj
+!!!T25:.Hl$NLP7TYrVd#R(2."TSN5a.321#65D;":@rD<0@4]!Z2=YA3L!>\6W/%gPWrLoDS^c
+s"FEW!"$G.fKB3E!<<T0!!)e1$4KZ0'*&"7&K_2e!!ZU8#7CMZ\!tYC!"f2q-6F38!"/e"`%qB!
+"TSN+!!!PMSH&Wp!##>8$;\W?OoPI`(^q$f4ofo=>up=HMT#PdrVu`o0E;:W$,Ap\4TGrm!"Ju/
+!;L@;$r-d9!!!*5*sN2T#$ME?$NMQ`S'D!;(JLYY#64`4]U!n4$31&+!YYqA!)*>X!Y,25$ig8-
+**Vp;!!i]-!%/X)?Y1pKWJZo)ji-Qas7)c_!!!N0bLe-C!!*'"$O$M=F4:0i&-Mt<-o*X=K`D)Q
+#65R>WA-gh[K$II9VjBI!!!G?Q?u",!!!!#'+4d?9E.9Z%KHV?!!!!=>4Slt#Qt,--Q*q3AhK"@
+MNd>e`U!L&nY#p_!"T(QfHpY"!<<*-"TSsPe,TI["98ZT1,S!E!!!!(!#MW60h!Iu!!O04V(W&R
+!"?N+HUJ2@!!!'6$NL0"s$6\r!!E]1!!"!Bnur*""98EL)'*'r/rQ]dPNq8Kli$kRT`>&m%fjf*
+-3=/J!!!B1!"<qu!!!Q5!!ao-1ua2h!!!6((TFAg745NA!!"GJ!X\r3#Tbf+!!<T4!!*?*!"G=F
+!!rW*!!!0)&-*5\i$\U+"onfX/K-U*84^hAR_&@>s8(gm!!<3$46T*5!"8i7!WWT/!#>6E$ig>?
+*Sm[p&d&+P!!<?KI8p7T#/a==!%@mL$3:;9*]+$#!t,84!=/Z*%@GWF#ljr*!!NH9!"X)--ij;P
+!!Oo*)E<RE8BAf>])'YNqW/Im!rr<_kX>IO$igV9!"/f-(&)MQ!!3]Ph5LAe!rs5>!sBis<<*C2
+_bpI7.0'DV!<i`M1^*j]$O$M2#QOi6R+)*Bz"To;9%rpMU!<<<("Y;5D3/L0saMs[[qTT!9jV@gu
+!!#+E70!;r!"&c-$NU5BpM:6<!Y?C.W;mP5!#bh>"=&=p!"0"K!!!6(-b*jl$NLb=!;,.Q"98E%
+!!`MqAd8_E!!*'-$NL57(]W_:!X&K'!]X:;"(\o:OoN7\oDccI!!!$"E88G<!!N?(!<W<($31IG
+K`D;W!!!!$!rriLleE'P!"AuC!20)e!!`KO\7l!P!"f22o\TiUz#6=@-#7LS4!<<K8!!3HCs61@%
+"98E'3*7p<A@PBss1slis2>iU!!*(=gr9R!"TST)!rrE1!"6Dm!!WE'!!!*'!"Tt5g^sMd%0@1C
+T_JKe#66-]B`\YB&HDh'hZa2`!!!!(!:se-$ig8.!"0/7!XT\CknjI)!!!'[=>Bth\5&1d_34Ei
+`>JXU!<@)o`WlJI!!30'!!<Q.$bM)m"onW'!!<<'%iO]g&HDe?!YYR,p]UWt"9]hI!!"&?#QP&U
+!!3-#!!!-Gp-Sf]!!NH)!<<3<!!M.Z`*E?C%fcS0)LEVdf;L^Ln]lRn!!!!'PH2!d!!`K(!!33%
+!!!!$S*gR_!!N?97K<Dg!"927$3:/n!!!>K"TSN*"<[[E!$2+G!!XbM!WW3#!!FM>6N@/f"Tn`*
+!!=#;"Q!1t>lXj8!!!!;HQb?"W&_lfc@-6'!!!4eX0ST&#64`(!Wi?%!!!+jmKijn"TT3*z$jltA
+!<GId!"$gP!!!-)+92BA*WQHG"ss<Oz"=!P,!!3-(!rr?%!uCq?hH%R#!!!N0!!!pa+ZJ#O3QCU7
+ILZ>X!!\XfZDIU,!!!!#!WW3#!!A_Y#ljr/!#%g%!!!!-$31D6!C6\c$-TV_!!`K(!"5eo!!`u6
+%0-A/!!!!"<r40C!!!6("98E%!!!;_(H^-'#QOi)*tek[GVMUuC)m?[$igh]b*+6![g**;%KHP2z
+!dX/>!s\o.2jjjS"TSOfIg,lQ&eP*E]WtrG#64`($`ZPo#7^_C!!!$"!!!%#q]u4B!!`K,z!!qL!
+44K)m!!!!@&d\P_0grWg*<HER!"^9qP:1^c#6k/<!!30$!!!!#H0kn?#6OrbR0Ej!!!&:6"onW9
+&HDjEZ=*_<!!!!,W^?ak%KHq<!!*'"!!--t,ldoF#64l,z#iHL\e;4G2!!")R#lo3)7([1S!X9&5
+&0T,Z.!`9,"oo,5!W`9$!!!(Gm0Nk"!rt9J"pP52!0r$<!!!WD!!0`7$ij6`$Q9!e%1"n>'*&LB
+!s&B&!.4\d$NpG4!!rf2!rru7ZX!PSP.)tB%fcS2!!!d7'`\XK!WW4"c%Q,tL3Wb!!"],2!X&K'
+#R+`<*<H3@!!!Z4$AiLAPZe%e#lo$>@D>nQ!)tc_)?:ig#WI)D!"Ju2!<<-#Hi>&o"98Q)#mCD5
+!##@=>lZ%2[k%Li!!!'#!#AQL!"9/8!!$!CK`D+-GlRgE&-)_4"98E-"_7QQ!WW3#!##>>M/"6!
+=o\O/!-:eA^K:mE<&=t$!$;XU2gZ2<%KHS3!!*(HrZ2FM!!E9."Tni,'*,@E!$RN7/-$1\!!3-#
+(0)(L$jct8!*%3s!!%b!!!!!1!!*-(!!!9.A,dPNz'*&ArC*JmG!!!<*F%]rV!!"giHN4$G!##EC
+QiI*f!!<6%!<@KG+U/#M!WWH1!!!`6!*"I`!!#I&IK0?N!!3i7z#65O.X=jPR&?m2U&I8@=!<`W.
+!!E:,s!S6T',U]L!#^_Zz%0QYE+s,&1!&MB:z'*;X1!!!'#!s&B&!.4\g"p4o.!!``/!#5J6<.G\`
+!(FYO!!!-%!YbV7!!!!(!#D$)0)tt`YT<cV#QOr-":"r-"9;^,-jp"g(]XO9)2p`Z!!!!."99)Z
+*mXfd1V\8:!!!!4!b.Ms!!3-&!<<-#Hi>/m!s/N(#6t5/'`\55J/&%a7DF9O!!E9''EA+5!!!6(
+(7M<X!!!S7*WQcX!!<6)#6=f-!*oOP$NLhW!!!!:N'74A!!!H2!#$OtcPRAs"9niOHk-2W$46b>
+!!!$"!!!%#q`Xu["9ec+!WW3#!"TpZ!!!E.)Q0tc!Y#,4!!!!,$jT/aE?5)]'EGQH$jHq:$3123z
+FncaQz":"o,!$hOY"onW5$8Dn0(_m#R"ooor%fcS:$31A4!!*'"!!--t4obQc"TSQ)z%iDqZ!"8lH
+VmRWK%0-M2!!!B8#=I`q*WQ6U!4E+@"pY,8!!EE)!!!"Ap_No1!!!!%#64`(,QJM_!!!K90ac#>
+'`\@@!$lq&!!!?5!!rW*!<<*"!ET(]!!!-*!!*-$!!!!0(q]hK$iq9E[3,M[!!E9%!"02?6g8S3
+!!3i7[Kd3F#65)2"9\])!!%0:(B=F8!!!-,!!!!E!#,V;!"K>j$HW8W!s321N2[!]#QT>33=5ff
+!!!!%,5.!!!!3?)!!3-.!!NZ/r=KDB!!!@Ke!U:<&-)\:";JYV/H>b_!!#]a!!!!+$31&-z'tW];
+!!!-,!!NQ/'!B4f!!!Q1!$*9nWW3J1!bn?eW<N>.!.Nid$3C2-!!!-Gp5K1T!X8W)!WWT."UP2-
+&ISgD!"*ktR0*F#!!!<.'Ypt*!!!T2!)/sa!!!?5!!!'#!!!!6]'BY&!!EN,"U5&AY/V+T!"],1
+*?u#n!"B#3Bq^Kb"ono/Ic*3n!WW3#!!FM>N<B4_"onW)!"/c1#lso9$O6Y3$?agc!rrl4!!rcB
+^p,Hk!"f229V)4a!"'&5!!3-#!!!bFlNmOk":"o1"p5L@`Y/=P&-)\N,7UXS!"/cc6N@)d!!39?
+:]LIuz#6=AP*<6'B"9A`4!"f22!4#/rz!"s,)?OZu9.@72*"98H0!#,F-D?1:K!"Ar/!!!!(#<)LE
+!"f;5!!O1MBE0_*!!"ZK%0-D6!5np=$NN+Qz!X'?:!!!-%!!!!(!;#%f!!!-)!=&i0&HDe2Z:P#rz
+&o?E3%0-DXQ``^Z!!*E,'EFkF!>#52%06G/!!!6/2Z/d>&H`"5"W+a`!&,>l!&%.X!!*<)_u]oH
+!&m7F!!!!#";jr8!!E9%!!!6(oA1Jf!!EE*#6t5@!!!#)8H8_j!!!!3Cu/M.!!+O8Y!`Bm!=Af@
+!2=?3&-)\>!<<*"!!``er0.0n!rr<)(V48[0H0ul02N)X!=&VC9YCu;(]XPDYp]SP!!!!#!!30)
+!<=9Ws.g,)$k!%<!"Ju4!YnP'!!3E+#lk#/)3;muS\A52!"K)2!YPJ7cQ`Ds!!*'$!WW34!<C@>
+7KESu"TS]RIiSLp&c`9VG5r-R2?UH_]at/\!!$E3-ia5I!!!'#!W`H*!$Q(VU^dA5$NL;0%KHY6
+'i:J%!XJc4!!36?O3*?O^0(X?%Kc\4&c`!Z,6/&N!<<0&!!!T3!6k7.!<WZ4!!Oa"*<6?X!"-Vf
+!"T&f"1V%<&-*OI!+<&[z!!3-%!<iK(+_gtP%KHnF!!E93!!NE=:n@Xg#QP/2!Ws=$ac)e)=U"j9
+!rrB8!!:Ik!"&],!!33%!"f53bkX^/!t#23"Xed?!!j2;$H%&f%feKi\7@H,"oo,B8o"D,.O>B$z
+":+u-&FAO[#ljr=$ig8-!WW3NeK+\j";Ch;!?4hIkLGbF":5&.#ljr+,.Sou!rrT,!WWl7!$$I]
+Q2h*n!!!9)#ljs870!Gm!#GW1*%3GhA2Oi$!"KH1CB+>a,maPO!!!!%#QOi9m,h=T!!!Z@!!!!#
+!!"P"*WQ0C'EA18)c+-0eWVEb#ljr3!!!$D\K_(V!!iQ+!##A5*.IUI!!WW-!!iQ2!!$Lt!!EB(
+(B@2M-na"[2%Bfj%Ll$G!!"Jp#ljr*!!!--!!!Ssk#Mcg!##b@!!!'#!%ZS@!!!-9!!30?:V>l@
+P:6V@!!!<*!!+:S,6.fG#QOo+'*/(QIeK'-"pP&-#QP/2!+SFt"9SW?!)=L^0%9k-8s:.n$31G6
+Dn8C<"p>)0!!!9)!!!DJs.'f'z"TS]+!m)tn$OQk69r%EF3rf\Rc+Ia0!!!!,"J]K7!!!!$z!%+oE
+bROUY!s&N)!!4&ECJFj8&4Ush64sk1bQ%rAP8XE.!"/dF\jcZ("9ec*!!iQ)!"6mJSJ(u'!!!!&
+!!N?(aXdE"$31'#U\9j4!">+:]P/;b!!!B0ULX]3!!!*$z-Em3g%KHb:!<`B&!ZD>[:&kP27X?4E
+&eP,f!!u8])?:*E$NP+V7K<Vq"TSN&#QOi)$cr@='*&"4!!!0&"TSVG/-$%b!!#`gp6%K;%$]#L
+Bc@$P!"/q)A-r;:!!<3$!!!!GYP?<O!!iZ-"98E')@1+R!!j-*H6GTf&HL#\!#m?e#rNk-!!!`9
+!$aH+"TeZ(!soP>&s;nY_E\87%g`4>%KL^)$S>eoo:p4(!"fD8!#6ZPf#s=8*WZ3M!!NK,!rr]/
+%uC/]A-N#C!!!?+!"BbF!#Pb;!!#ee!##>@7fN_o)^tan2'E#$!#5S9,<,f0!WW3&#n[.MOnS@_
+5QqW.#lk,=!-a#&/Rc$XUMg,4&I&48'd9@'bEXn*!<3N/"U"l/!"/c;M#@0]"oo)4!"&]+%2]'F
+(]j[;!)H2e'*&G1rs/TD.0'Z3+T_WD'a"F\3!9Bd!!!*-&HEH+p@?'c"V)%L!!Ni4GCg2S@C5X$
+DZBbL"onW<+f!W3Pr'N^rsf#4"9JZ*$NL]nr;:(0!"Ao.$31&8(]XOQ!WW3#:J(U#!";?s!#>PA
+#$0,6!u2(A!#o?N!!!3*z&HDeoP5>4']!e;rNhDuks6Ipe4;\&"+92BJ&HMk<!"g;h^?3]5O,\p6
+E.aC`k5Xpf('"IM!"/c.!!NE.('U89)#t*G"pI:lF(EPr('"[G<ma#3'aOd>)duqN!!WN*!!!!2
+!!#0FqZ"gO[\8nFTUsR2lck;L(]XU[!!!<;!<<E+&Kbi'k0<R[NJDIlK9Wh,s6sk@!!Eo7$NL5.
+"TelD"eE"<!"Ao4"[Q+/ABk/j!"&p2d6%LG#QOiD@9W^3"p4i*!!!T2!'QMAs38-`Tp(M0T$dT(
+c&+V#!!48C!!s5<!!rW;+)J[Rc1R-WLN%3bPd]`Sn8/p@";1\B!!3-(!X9DDS[977%0-S95u_o9
+c@QLtQNI3r!!-@h#ljr5z!WW3#!!"eT$31'.E/fBtLMq<[NjGnh!!N?<!!!B6!!!E-!!!$5!rrYb
+IsmW_X0SmnN,1HZ!!j,9!!!'#!!!<>E$7>jHjTj0!)+=31l4MrJdn?=!rr`0!F7kq!!!B,!!!!#z
+!&FT^!!$,?NIZM6Dfp;bZ`a?/"TT;<!"0,6!"8i-!!*`8!"%P4I?pn6ZEBIOCcD\##S6t9!!3-#
+!!s?Y+Zt+!$32j^9H*sgM*\%k%A/sh!"8i.>s8Pp!"/c,!!!'#z1B7a^!*F3"J:E>mFa/qQY5eP+
+!#>P7$OQk6$ig8-!>>P8$/^5\QE%!kY*Fr^3!]Ki&-)\1!WW3##o%>%4F;G_!&FUK)ZV^O6)Ugn
+!!kT.Muj!\@K6o@;;hra!!*''$3Oej=9&=)&0;8\!!<3>!!$9D-ia\V"onl7!rrH*!!rf/!!!LN
+`tA@V!WW3)!<<<(!!*0%!"/f-+[#f03l!<S!$)&']Dqp?&fVoF^9%eD#W['e!W]<2!"T0/i=,be
+!<<91"(Ttc!!!06*Xr)L!rs5>!*mMl!"Ao4!!`f4!!E?'#mC;/!"O+k&c`+;!!!3(!!WE'!<W<%
+$NU5N4TG[I^b#ln*<8:9!!!E?)]p]HXUG183Hg>_!3BW0%g,\f%0-A/!!N]3A(Xl`!!NoT%0-A1
+!#bh;>fJ/l%0-S4#71J4"9JQ0"TSN&%Wo`(!!WK)!!WH("onW(!rr</!<=9+!!YL"/IDIu!'\$q
+!"9JZ+"k;+e'$tT=q^l?!!!E-%uG$1!!!6(!!!"es0r=7"<%5/#7^_QBFk.D^P<+"&-*4@!!!-%
+!!!-%$NL/WohPPf"pk80!<iK(!WWQ5!s&N+(WP2;z>l\WE%fcS7!!&/Z\]4TsbNSt0'*&4:!"8i<
+M/!J"!!`K(!!&Ge\-N';)?3/2%KIG]&-)^FLC".r!"T&0!!E9%!!E90!!"PB:B1A!#ljr+"T\T)
+!"&u6!<`H?`nLk$!!!")!,AbL!!!6(!0R2i`r4B0kl4g"!!WE'$igfpC(1.C#64`(!1Eks#QOuF
+s$d5'!#oS_!!'ch#mLq@%fcS0"98E%"98f0!%[_<!!!30!!!$'!<<0$$4$_7"9KCZgC!u]!!$:)
+C9\9L!!`K(Oo2c0[(HA0s)V3u]B?:.%KHJlAcTJ,!s/H'jSsB'!"/T"!rrc1RIi$1!&j"9!$M=D
+!#P\>"TSZ*!!3-8T=+e$!!!`6%KHb;!"T&0#QtD5!"L1Q'*&@>CAg+'!!!o;"TSc-"9?3D]DqL&
+F&k01kH,=+!!#/o!5(Gs!WW8^s)nAB$MsW%!"AproIKtB2Wmj9+TMQD(]X^C!!E9%!WWt-[K6F/
+!#5JD!!i]-%fcS8":+u-%O(ld!"&^@rAY>g!#bh@!!`K,!5GnQs7?83<].MPXUu$C!'Ooo]KH>u
+!!20\FoVLLqYL?p%02gg/-#Z.k>)($!!3-;!!NN+"98E'!#;-7!WW3#'`\^D#Qt,<!!!9-#QOi7
++oi8V$34i>3"Q&i)?9p@#64l,^[<qK:sR\ms8#t#,nu"49uJF[(]XO9+o("U#n/Zjf`2!T&C^Y"
+!!E:Ai["R+#T*OA!!!Q6!!!B,M#AS!'F4[=%KI4D!<<*'#QXo*!sel,>BCkf!!WEC!*h)U#mCA1
+!Ykm_mPLG1cI`*rqHO"H'SHH\`$bU&!!!!Bpu+1=$oJ";!!!-5e,LEg"9<H$,lduP(]XO9!"];6
+!"/d_r?M@W#QOi7!#5J7!!!0.!<<*%#QOj/F<(G`"ooVC>V,p^"TeZ*'a;hL1n7CffDkmI>Q?&a
+KE+`b-ib(a!!"2;iA_,P2#l5/!!Ek^ruD(B!-.!E!!3ECz&-W%6$NQ"],QJMa!!!K/'`\77!!NW/
+!!!*,!!$5F*<Q9G!#tuD/H?(\!WW9:"jC)bJt<X'K"V-[gXOHI#QPP=!#ttD#?q/:!!r[Ls+14Q
+!([(<!WW3*&B*<@!<<*'%lQ!>!!!<*?fY5p$31&5&HE"8!"oJ9!!`K(!!!$0/'=\4!!s2:!#C(b
+!!iQZP:?blc<.o7SeHL']`7i_eBFou!#,D5)up3K>5u&3#m#5LJcGlQ8,q$>!!!68`7l.1!!!05
+2D"n/!!rX4jAlTp!!!?<!!WE'&dA=9#64`(!!*Q[b,$9^#nR(:(4ZAb#QQTC.L%ZR=M]T\'7>DE
+s8(L"bc1pK'EA+Q!!`a4s0ht7!I"Kp!!<3ks3h#L!!a(RgDL"l!!Nlk/H>bN#ln>n<XK06!"';<
+"onW9"onW.z!=gX&V'5mG&-)\GJ,fQT!&9Ze"u=JOR8g(AZmV)-U#Q+HNB_s=FT@'p!!7`OQiI3g
+`;_4d#loq`C]FG@!!!GO`%:rh=k)j=cnk_&Ac$HI#R(22!!!!,!"pMC*<6'Fz!<=&H!%W[`":kJ4
+$34=u&h4"b!47-A<2VU\-^7)oirAb45Ch%%!/(=P!eLB=!!<5>s!RmS!0$nn!!!9)!"@)i/H>cR
+eF!:_1]RMeqf)TA"TSZ*!!!B,&gK^`!!!9)!!!!"!#l:G.t]nd%fcS:!*km(.KfbP[!\9@V_th/
+PX_A+s7_L;JBi9;KE(uRJcD);!s$:>-ijVSN;dVn!!iQ)%*ZXA!!$0OmJkNi!!$U-E<$7J!!E9%
+!"/c>,=3CN!!iQ)!!!$")[cWrK0'2H!!!?+>aQ-R"9AM0l9"\`dQqh#LF5DtXoIbfpDOSF"pG"T
+s)/GN!;bOR!sAbTjqIdq!$M@O38rdl%NjHta8!mpL>\R(!!!!%!$;XMY9O)K!!N@8N"c6t!WWQ-
+%KJ/D?N:'49'eDg#S$h7"9?X148'lH6#\6--UM:Es6Td[)@uuT"T[!ND\*!NqVD8U"9d08'EA+5
++TW!2iS[NB+5?G.prsS/i1'lL!!!-%*t84R,6@iF"TW1o'EAC?!"&]9!&'F@!!!<tlnpF%%KHJ3
+!6aXhp*.pNE%$Jh6=R(sm/Qeu&-E+?!7Lmc&-Dq/h?!c^"OcEH!!!!B!=UsHi(sn*g[rP]bnc&l
+S-&`k!!E9D%03RV!WW3(!,%6)!!iW+$31P909BN@!!u9a2(o4F!!!-%bD3*sGd_I`18?:C*LZtU
+WrMk$NAM"CrVnPY!&+2C!!E9Vs2G$I!(P.1!<>"3j\_458c&AHo\Y?&#lk&<!%m"i"$.D%$$>9p
+7kF]E!!&Mg1][RV#V?Vh!!"YX!"8i-)bq3dLT7=u[V_`oUFCF.RK.`8s7is\1^a<^s"Fc[0D_CC
+"9:1V`W-DI7a"^2!&`Nm;3ORCqY]IIhh;%:!!<`3/_rPl3ZJ,+FQJfY/H>qS!1X!F!<<**/J/!`
+!&"TX$ig8H:)Cd&Wi:6OD5&e\.<ll%!.:gHpp?#;$NU/*0F@e5qP!rm!&=Mn!"8isb>SEA2;@4i
+P=\@Br8mS.K`DDZ!tPA`h)tj$)up:ejd&Cg!!N?&S,Y;G!!!9V&HMk30*hOd!!!s5(W'_H0`MZr
+-fH,=)NPXk!#>QEaS>e47.L0h!<@92IfKWPGQ3a)$ik)C]`9)R!-p[,RD4?PqnYAp#lk\?#R:>i
+"TSN=prYrj#ljr*-EV,E0)uF^!!`K($jcn6"Wr"3"onr0a^jThrsuaii?"U0NtsSQ('%jcq#@3Z
+nba(%!-Ra[!!N@Hs,[3h!,MVJ!$2+?Gru(p^OiE]_)q](!#5J>#66af!!!i1b!SK%!!!!GX_g$N
+!"Ar/#64`4#ljr/+*eq4!!rYIAEY`I&%j:K*hO@3(,Z(-!+X+Fs/&3Sr"K/3Fmje["TWcHO8o[h
+C]D'J*WQ1c491eaJuJR_49,Zf'`\LE!'(2_!#PFQ6UD(Z!!"@JD)a0K%06G6!!!E6!!!0EGom4j
+#lr)uDUN[%Hu"pYL,l"?7O:P0KFT\>h!>"?.1Q?`q1SkS!3krt!WW4^s'#O)!!rW*9O2>ps6`bb
+"98E%$NL/,$NPt:(17gV!!iQ-"9:dh!"0nL#6P#6!<=5W!<<*'!!5&_&@U/-dWM:3CQiCc3MR-T
+,tA2n%PV)Ali6u6%KNg1K`VGYYjbm!!!&,\>64d)#ljs!?"iF$mSX#f!!!!,!!!!,!/K;E?k`S@
+#QOu1!(-_d$QoES!s/c0!$E!W!!!0&!]F6o[ao?EFeX8!P@oV1UC]m@7gF\W0O!8ts8OMX!4)ES
+!X8Y/n6?"p!0I4b!WW3,!!#\uB]oE`;?-h"!!!B,!!!B,LYESP'EA+=!!EE)6N@)o+92WK!XSl-
++;FnW!!N?(2Hpa$XC^Bc\L>l<[N<:#M[42%:`MAN!!>s^qYK`Zg]'S?!X.-I#SmCHV!]$!#mF0+
+$ij/%Q0G%d!!E9,!<E0/!"&]1"98W/$31e@!"/c=,o'gJ%KHJ6!(R%%63$uj+b(5OEr`PJA`?Fp
+.+/^9*l8YM#]9]?*&]YS"&8.YqXLH;s$?\e"P<8O('"Z:mM>j0"]57.!)]VYl(]@$"98Z-!<<N.
+$3185!!WQ5!#5J6$NLbb'k!%3!!!6(7f^1g!!!6IIhd3L!4/b<i_?s3dLio/_A.t7D?<WS2DkI:
+:$h`QnYY(@63%&ifCT=a!"#Ih(B=aF;#h");5TWCUEBO>!!`N*!"8i7!!WQ+"p>85'`\4A!"gLl
+@#b]s!!`Ko!5(Vu!!aZs'mOd"ZXD'aa\R+nP9mSQ6:Y!/5_TMO$k`[JM#Waan,NE/!!!&la:A7N
+56'47!!37ZM$<qd,7mp*!!`K9!WW4ol59R%$NL/,+)qqo!#bh@]?qQ-$31fT!+*)L!rrQ5!&T9@
+(B=KY@*W'":NpH8-+%MU7oV0-KaD)p&d/Gqs-:gss8R-?!!2`5%fcSns475N!X":9"onrS&6C:\
+#65>;!!&_X)#sXE!!!!@E>&<P)?9rQd2NQ&!#92J?FCUO!!`i21kHAW!!15Mc<\OfGA!*cZu&-"
+<%pRk$"")R":'b_Q-A^ss)S/?!VFGD!!#4_f)PdP",Vj=!!sk]="++S!"f84!28Zq!!!B,!!"*\
+'*&"N!!U!^)\*2T'kmYS[MArF#7:GfJeJq#!QoMWDj<,o5K#b>+IED/!2161!!!E-!7CWh!$&ZO
+jo<\is-FB!%'fi.!"T&=_X.O4!!!!8z!!!E10`Vab$ig8."VV%>*Y8;O!!",A%fclQn4!B_!WWr8
+!"o8J!!<3O_/u>gPr$3?`'2ltQj9AdTbpf1!"8i-dJ>-h*5)=5s3Qo.QP0?-Z2^U"%fd'Um03dq
+!!!f8z!"8ub!"],=!!!$''*S@W&-)\1!$D7P!!mK37K<Yp!#5J6&c`^J!rsjfFJ*Q;1Vc5n52%-H
+#GV9m(fgV:$ig:TqBZ+]]`7*nd#n?p'*&HGs.fW*!"Hg4"pY,.!#GV8z$j89b&-*+=!!*6:"TTSTz
++92oP#]B-$!!`Q*'`\4H!#GV;!%Yn9<;us25GgTt9o;8m-#RTH=rR_L!"%WQ+ohVfn4RinkPqn6
+!s$ICSeV5*EW<]P#R(;7'EAaH#QP88!!$td$3CGA!!NH=!.h$e!"8i-&d/CI!!rW/3-YE''*&"8
+!!"hU:?^5-rrB\rVENX-MF*(EDJgb()[HNG$/t=s!!(:5969[es0O!Q!6P84'`\5Rs1JC<"TnrC
+!"o;<!"8r0!-!>n!XB/7"ToG=JYsFe$ig8?"9o87#lk,gGQ7^W!!!-%!&O[Nkg`Z4!5(On4k`Vf
+6AHk)DC&I*#Qk&5iU7rj!6t"+F7SMoZm,YQao@qI!!%$=]`8<A!sTG>&ci7<$j-J0E.&&p#7UY:
+!u(`dV],UE!!!W7"q1J<!!P?,!!!Z4!!E9%1]U;7TtZbON`*#T]g9%>X8oL>O8sn5"onX,nc0%6
+a8?PM$]b8efs,A<qcj+&"F0g*!!!!#!!E9.!rrB&!"/mi3XuDq!#/s+!"1Iq!!j)8!"&]+$31-.
+!)/Y!!!<5LC]FQl,ll,^^6FY<;Q`d.6+%B-!3m6"!.t7U!!$3n!"0U`r"8u;NrT.4Z#%\^>Q=g.
+Gl*R&!!!'#"98`1!!3-#$NlGN%L<%7'P'<+$SW:q#S-n8$31&5!!61$9U-Y!!s$bc!!@s%!6_(M
+P`Cc%Y"lYr[1fVAYnW9"K)c)U!*\pn$Q$k]&c`<"s8UcWCsDi^!!3:JqiCdX!!3-'!!r`-!WW3.
+"-5JQ#QOi=A39i"0GOQn%fcS:!!!?+!`f:pPo]o-!7GZ`",8*%bE(4-lp/udfKHSsSd2hYAhu@g
+!!NN+MZ3YZ%AE_.!W[$+TWuJrs8Q(!!!nMV;@NU+"98E%!WX")3"Q5n!XA]1#Yf!;>7LW5,??T(
+$ig8K!!!!F/.2F\!)&q#&.JU>*<62bO4GuN5gi$P4gZu9#J)L!1H-EV"U+m`rr<02U&>?#!,M+t
+Z,Pc's&B%!#`JCS%0-A2!!!!#!#D"_&-W%8#64u79k^e9%KHJR<\jmf!!"&?!!";r$NL;09:m"3
+%0-AK!!CE*eh?ATdR2YMZne3X\h.MM2]r)("TXG[!!Eb)r<iZ,C[n(&`T.!u<<*")MtU$X!!!-%
+!!!'#(7I2o"TST/!!`d(BX(bO!!"6E1Be0e!$2+?!$s0(!!E9pT,/%J!!"#>"3]tDe4mJu>`Ni]
+4.RY?(l\Ti!#GkJ!7Cg"!!&2\":G32s'l3;9$@82gL^_=p+cXKz!!!T258Oe0%3!A$!$ln7'`\46
+#YR8[!!WN<!"'VE!"9>D><icO#lk)5!!$MBjm$R09t>LRNcKt<SKuAqN<5aQ(C(<JdJkj"!0[9`
+$NO9.@g**0bQ%FnAdEeX1'%@Tz!"f2q(CgES)TiWl,^U[L!!!!)90<1S"p5J<$5rmE$k<SJ5S5OR
+!!EN,!+T^(l=naB\ThA>EeulK,g.$a!h]N0#7COZs"=?PP5PLk!*B21"U@ZCs8(J^#^l>$!<<*"z
+&HG$3%KHqVaq4V!HQa+(!!!9t49,?c!tkS@)?9aG%LH?)&M+4g":"o,@qau:DpE%:3Q_X-$,I88
+#br,f!."VF!rtsY9`P6Ds!RmN3<-,]!!C%:QD4EZrVo+c"9JQ+!!<E*$ig8-!!*J&'bgW`!&Rs]
+#QOi)!"8i^_%m"N#6T)CLIV=O!!!E-$4$jHN5*#Dc=k6YapA"R_%Pf7UD8F^H2mpI!(uNN!!7WL
+-ijH1s/l>%"2Or&UAt8ls$-\i!WW?'!sS`6z!=PY;'EAmK1gL(ez$ii#u('"=>"*F<n7fWkr!"8i7
+#R7hu^V"L1BZE-U#lb4I'''=n'ncR5!!!*$9'T+N!e1.t!<bC^XoJG(_#K^ps8W&t5Qh2k!!E9(
+"oo&3!!!!"$_nFN!#>Pk>lY-1!!!!-!&;;*!!!6+FSLV]!"&]+$igV?#.]]-9%#rg28Vq`>EF>J
+N,hrfF:1J=!!!"$s',O,BCB%)$Sq_(!!*/?r*f^[8)XEnShC'D#m^MB,:?*V3rfHh#65#0#m+@Q
+!sT>;!!!0*!<N6u$k`P?1_p&k#lpSO#ljr8!"$M7dQctR_F^\1OFLr&E`PVN$Ub's!!$.$>Q=n>
+mooc"1B,Dr!<U7<@KJ/Pi;_,p0)ttY#QPD\-VC$n!!WW4!!iQ2!aKdK"q^h8!!NK+!WZ(+&cbog
+('"=@!1tqO!!!K/$,T<_5Nt&B8Z5jTIqXd]<^h*<6j!Dh!*K8+!!Hs'>6#$drlP3A!lb(H!\R"$
+s3I8i!!!<2!"^A&8t\6G"pP;4#QP/4>]TuO&HDe2"U"i-!)X.;!*(ik!!!<*T.gQO!"Ju8_O7fl
+Uhm##l6WnOcQ'G0PRNHMC]FtGJH'ft!'pR"!s0VAbQ%VJ^&NQ^!!'A%WW(bfF^A`=(%?/t!!!*Q
+8d$M])ZTjL!"3Af8cTD&!"&^/SgsdY!!!!@>PSb(?iU0:!!5'tRC/'NCoKqi-+=K4*4Q`J%#Y+%
+!"T'[s*"YI5lYU%![.?`!!!8;s*k"K!42O$rnb>2?>)22n8L,_!!=fF"=J1.!!!Q1$Y@g[!"],1
+$345#.f^Fe!!"*Fq$p/-!!!K/!]J#c[>q&!WCQ5"[h6q+\.t5:MZ@Pn%fh.[G6S%4s(_]<+Ss:^
+!!g4;IfKHKZhg[#hS"&<BJgOoE&%Cn""d+J-ZL(*!"],<A^j<P&-)\;!*PmD!#Yb:!$>G@%SgC3
+!"Ju12T>$0fJ)&B^KK#aLNJJ6P#*eY-mAWk!(,^h!!!l9DZBbJq;Me_!.t-:!WW84qbdH&bN&X&
+JcIV-!!!!4[^ZMg=TAF2!!!6^8cSiP6i[3)!!*'*5tV+]!(.4r"oo'@dOG6)WU+ua0\\_)=jp<)
+FGr/A:bO.D+ohTC6K<4h!#Y`S!!!Q*iX>eeK)D#<!!0\.;?:1Kj8].2!&OZU!!!\@\-=9_!!!H.
+!!bDS!!#&J!!!l:!<<Bk8cT%q6Oj)#!"<>b.KEkUm!IA=gH<5Rdo2$DN&Qnr0.&(k!!!!cj)tD&
+)#nLS!"\nb$ig9Zr0[Td!P8/+!FX+2s8RZN1]RLU!#)fN"t!IQ!"Ao.#<#0S!'3LJ!#Yb;!!kk_
+!!WEj%KH\5$t@X7!+;e1U5,F]B@h(>4N07m'VYYl!MBE1!"f5/YlFq-kDTfR"6oA)"9;-qZiU@2
+Yl@)p":"rt^$tpnd/X@b";(V8!!!GOa[6aB)ZTk:i620$!"^>R5.-aX#ljr/$NL/,z$c'!@LS8["
+f5JPh`AbIEU&pJYTE#i0&HMa6!!NAcN!omml1-5*!)3F"!X&P.s$R"n#6@?.nGDt-!!X,?&HDk4
+!"@)n6PKM>!!#sUbQ%VC&0b(;[?pq#!!!01z!!!!,^p'PgTl=YrDo4]V2n]p"!g3SW!#YbK!;s)%
+"T[_E$jHgungFV@9`MI$"9Gb,6j3\u!CsimqtJJ<"r%1P!!3-#%*Zg\'EB'P!)qh"!!!!1,#gb6
+QiIEm!!N`1z!!!DBXh%<i-/OUP%G3V6'=Jm3).ap?$NL\;h:qu4!7Saa"oug<5l_-YqniC6!/(8Yz
+!#.7tg]+EY$UUfl1(+9f?m5RR!!!f;!"BDG&c`p0@/p9:!!")P\k*,,#65BW1B>\%\khE6hMh%8
+fJfN<[N'i9AKWH1!"T(cg].EVe%l"g!6Xq"!!bsi_Z0Z:KDo6Yz'Js4Ps/oH36E'o>$O-Z?+oh`G
+!#G_;%1WaY!$'p*!!!H.!$;c`8I#5#!"s<.!6qXW:ZWnZN:RM22kgto*.\u=+=[a!%fkG@!!<5M
+_#OZ>b4It"#=\O-!!!"Ora5^+!!!!51go)<Y#l&uW;eU\"p/0V!!E9%(BXXH%LWmL*8k6*!"Ao.
+*tZ"T#64u/&ooc.c0\`Q6b8JjI=8(rO@=:kOtDY!5QD2m!06.U!"?L0!!!/,s(_T9/GRZo!="&F
+DZp+Cz&dpb+pAb0m8fIa9!"&]5!<<*"$31//!!!'%!!WE`P`uXX!"BkV!!!G-WuM>Jm9@Iq\s'UO
+IAp;07<MRm/WC$$!"8i-No^uU%(l$0!!KS,CB+DepsT3D#(Q5_"TSW)!!!!3$TbTes8W*k)ZU-D
+$31D6!!!!+!!<6%!!33%"opZJPR[Zn%3#`V!">m.*!WY7>Jih>PIGsgWE50MF]=MUN<hcL$ig9f
+jV7b(]C>k$"L7uB!!4_Hdf9CQJ+IR^!!<3$!!!W>3jSJZs8P\1!!iQ3!"&`,!!!?+!s&B%!Wi?+
+!'-:.%KHJ<)[ucI%'$?J#-b+2bXof`brtJC_EQQOWZ.-M<t?8a!!8;_>Q=kHs%NIuMZ9=L!!D`^
+$NL?]rLsJr!!!3/!<<*4!#U<Wr9oAq``3WO"TS`2#c*Fa!"K>9%0-A.%[DDC!ZM7B!!X/<!"o83
+\Z/iW8]G5a4mj`851]e7)j;[O%ic5_!g3Lf!!@9A9`PEUs.B>l"7Ymi!!RrPU':St!!W]0!!!W3
+(kS7TmtQV;<>#98!!WW5Ul>QY%LN1F!!!!/Q$`W7)[$-@"r.+<&c_pBW`mV<`a[1UmO5q9f)Vfi
+P:0KC*"r;ROoJYd"*4E9!!eD]TE"ronFI"f"bHWH"onW'"pb50!"o8KJt)],L53cK&c`(8"pP@/
+N<T@m$31M8!!!LoHia?g"98E+'`\4H!!'QEcS+KTheouCRs/[qKP4/S*`sCG!!3.CnV@MP-L[#r
+!Ef*/$NU73s#L;`CAH-T!!!!"!!!*'$31M8!#Vd$l2OUB7lXPc:&mC2!!#A]V"4Tk"98r6!'b&q
+&HMk3$OHeT=kRQ90Bc'dDRj\TGAMVZBMY9B=<'L)!W[B5L^F,/muRMM=SKH9!<BA(3X#Luq9As?
+!!!$"!!<<1!"Ao.(ouocs%tjJ3**jj!'Dt9!(0MWo)T$u!"T,25@sm-!<<*-#ll&MfkShdkY'fN
+\Sms]CjUhK:S8b2*'O?(!-Rgf$32FAO8o;`pUgk7!3lJa"TW<5c2[hE!!*'"!s8l1%0-AFX6JmK
+;*.9-<l%N24>?g96VaHK!<rZ,%fu_qAcNDD!!!B5!$>@sNOWc,LW*W^1YjYT#lb4_"c388$k31<
+!8>!i!!MVn!!O26r!NK*KD'Qp!&afV!XA`,!!!--zz!'[@Oq>]_V"oo)4!!#@c@SHh&":5,0!X1i:
+)#smA1H>F;?>e/M\8/7&`F%^_h(A7)rs@9\M#iA?%0-G0g:@Oi"RE>n"W-t3$NL3[p3?iB2?3[X
+#6=i*!!EQ-zz5,e#Is6<Db!"Ao.!(-]p9`P.r#m()."[IGQ!!`K[3<0.fDUFHRCT`H3?fa*"/bB>K
+$.f?;!J_'m!!3/S\d/9=l`pKo(\mn9!!.`GGm47+s8N-*!<E0#":+u-z!!!!_W:B]`l;.Zb%0-A.
+6N:Lh!!!-.!WW9*5^XFL#66P?!!?PFdJmGC!7P&o@+.i`=gL&XBOk'hP6a#M!>42K#64b1bQ@hH
+[e)-R#\!bL!!!Vnrr<$!!!<3$!WW3#zz%QpQeqhhc3EY\`W!#tt='NtJD!WW6$%Km1E!!!0.!!!J=
+s',*qdoah%dnRMYZT"FgA5jn>#W2ee&`2OQ!!'@L!rrD2oIU.N@K4.D!"nAnz!rr<&zz!!!!/4J`#S
+MR:rT('=O:)uosQ=o\m2!!*'0":PJ7!!NW.!"HL=>P%pE=Nk1%9ta]92k=Vm<$me72$O'nhW"h@
+!40lO!!9V$/HZ8es1n[8&a')n!!!!$!!!'#zz!!!KkV#U=L[+975!rr<@!!!^:!"&c-!<<T4$jH\3
+"UG).%CrX/@&fcD_d:5rTJu<mVA5g0V$9ft('"?+n/DW5Jc@(t"+1&m!Wk"SqZHm!Wr"+C!!39-
+!!3-#z!!!?4!!!$85$[7As0u!"?ta3_&Wj4P!!!$")6hag!!Wf6'dWn]\ZV<-Wh"IR?GgQO2t&Ds
+'qto/##YF:!!&V[)[HFps!IdKHiJ<l!\XNM"98G%q^):C!X&]-!WW3#z!"'#4!!*j!>itYX\5Q"-
+BP7heOK^J?!!*';Yh2\N"q(PK,m"(WY*`UsSU/1[_eYo(mk:OQU'@Fu;?.I4!1r[!#QTGU-NF6q
+s*+SH0)teO!!'%r-3+#I"9ni-zz$4-\4!>[k(k4AV_;bCG2BFPQ8YVH1Y!<="AfM2DN$Nq1j!W]dA
+eiiXohdYY2gdL@$dPRO^MG66&&K1WLDZ=k]$UF]A!"_j(b5_MGh>]G;!H.R^"onl.#64o-zz!!!<3
+!!!$"7]"o<s5IMs!!iW+)[$-@!!"W@!!!0&9h5fq&%fC'4nM2#@cTc/7-ICo1nI$k9g(oW)?9bT
+s)nGO5lQ96&5<,I!!!2Ys#:,^DY8Sc!!`K/!!N?&zz!!rr3!!*'hV;2"KiaWAs#QauF"98E%!%p_@
+!!N?s8.Yb3]=HKUoL7YHj?MEfkYBP_SjJ</4[fr$!!$p:Foi%:rdXt[9`N99!!V3Y3!98"on!AJ
+#64u/"TSN&zz#mgS3!<>Tch#.33@gi>C!WX/Bz/k,g@"TV7f&-*6Qh0n!MU8!('LNJ?_5FY*C(S_"`
+#[.35"%)qH!"U4=f`29on+m:p!2fU\!!#.]cOKp`!!NB)zz#ljr,!!!$,$3^DD@__pBN/cmlz!!=/G
+!!")@!#P\9#6h$]IG.>gU4&DaFGRIlRmjCpUB,uQ=o\d06N#mE%j:5l!!jD0q?R<+VYZ\\!'L;-
+%KHn;"T\Z)z!!!!*!!!'#!!*E6"TT6G^]+7lNT<b5z!uhLG!$;1@(]XO@"fL1)g.S07I@,e3Lq,a>
+7B@<#!J:Y]!!`Tmr8[hg+RIb]#T)t+#R:@,qO%<`4TE_;!"8i2!<N6$z!!!<*!!3-#!=B/;!#/nW
+rr7q:j@fOR!!!!$)[HED*rl9X!!!6-VmAkP4S(hl3SR3b6/+NH35d_^(NLKC!!!YNrr<$-]CQ4,
+!2]]Y!W[HCn,WM+p['.)#lk)1zz!!3-($NUS=z!rr<KM=L<>9`S%&+9hgA8IPSK-jp"nchVk'ZUWq:
+o0D"igIpHjgH<_?`&=t=EZ?G,!#!9N!!!G>o*,0pV>i[[!-eD2!<<u2m32N:!!EB(zz!WWB3!=B#2
+!!!!$!!"C'nb2uW!)[>N"oqFj$ihb*$NM*kq0Bi`7cHQ%5h\6Q9Ai+j4O#k(2RF9@*%(^d'#jkN
+!"?L2"onY"s#gD`GQ%"3!#YIt+ohoL"9SW(z!!!!#!!N`2$3gJ1!!!*$!%3WnpA[he;.^pT!)H/p
+!%KB)!#j2ZH,?es8+oEnK#q-"LPh@ASlLk0Gn#r;D?'kINW26D!*JkV!!$7'TEP<[n,Fg:!3>lr
+!!!3)zz!!!9)!!!!'"9JQ0'*&"7!!`KML&:ZF_D2*&IOP70CjH?e!%&H]Z`q#2p.!,Ta]Pg'MNrFX
+<KK(`%?gd0!!Wahs$-Pa=S+`V!*fJr"TUdUs![pJX8#`r!!WK)zz!!iQ)!!!3+!WWN?!!!*$#66'(
+qtU3.1&ql7.0'usH3aKN-5HTfYe!?u7`^2'=L!X=Q$Am#O>V:mP5oJ#"pp:h5QCddoK<0S>Q:?"
+!'frP.0'@Kpf@Fq"p+c)zz#QOi)!!WQ-!!s;=!!<3+!%!?rq#A2d!"aT.!"s*o#QOiO('([tX*1b?
+\7k:ohF5pDg+:#Xb5eOl<!3:'!*oAs&.:W#K*_N&rVIT8%FY8[&-,Z/Nt)-q!!!-%zz!!<3'#64`,
+!!iQ)#lk#0!!4]SK`Bc+ZJHo.!"T&0%KHJ/!5=;jG-R[LB^S(@7FWg@/AN1I!3.MJ"9SW(>l(9.
+$U"HA#ll4Kq],YGdf3J^!)roY%KHb7!!E9%zz!rrE.!!!-%#QOi2!!39'!\@K-s4XKYhBi4&%fcS>z
+^58n6Z(JO>mQTJre100'^`(ArW[^sN!rr=+qP=`24TC$?!$hI>*<6Pss&os6;u_mg!!iQ)"98E%z
+!!!!$!!<H+!!E9-!!!<*!X&K)/6RZ+g8_I8-3+#V!!!K/!!!#5e7@#lbCf"Ol>!GA^h\dJ/6##o
+(N9E\!!NA`rtGP:khZ:I$./E/!WmKDi>hn5s5+"c!X8W0zzzzzzz!!k;`dJs6)0kPtl#loZ0!"69c
+ACE`cKBPtnC9;NlCPd*`<()QZDup7E"T[W`'E\F#h>doid.]X(!d+J$*<6iShZa;e"onl.zzzzzzz
+#VfQ2s8S!3Aq;]D!/2p'$b+Vrdlts-kY(2UX`D3mM/t4I7#;_!!XA]/!9F.o!s7]C!"0+[pH/KY
+FT:;?!#>Ok"pY26!!`K(zzzzzz!!!!)0jE'*s,/UDJMIN3Ke!-2[t1Z9YFBg/<RZc79[5N-"i:8e
+.;Tbo!!!9)K)[n4$&\aK!!#ssN;rr&s8+\S!8[KJ!Wi?0zzzzzzzz&-,%leFNXi:B2B3&IJNFJZX[1
+RsCT*dtkP.c8E3;_>qt4C_f_F!!iRVs#U2eMZ5sB!)rlV!!"5Cq_eESh>0qL!WWT.zzzzzzz!!!!1
+!(*I1o)I69!$%jJ$37GaXbO$KH(J$bLq-4)27j%/!7<63(/4c/#QTJV3rfSEs$6Vb;uVaV!$_I?
+2?3a5qG74p!"/c,zzzzzzz!!!Q16DN'$s4'mF*2X;T!48ua3T45p:#A.`:t.eb:S0FcDg6Fa.hrg&
+!"/Xo!"'J<OoPO`s7Rf?!9*s'!<@!4QiI6h$NL/,zzzzzz!!WZ.!!!H.!!c*"o_F-WrAsuZe?IXe
+iEXu/h`fLce3VeaT/1V.G]l"r'c$oP$N-Co$5NH$!!30#p*Th?iW"0(!,_P!!!E90zzzzzzz"pY,.
+!"Ao.#>)/lq1HT`3rf91YhD+r>h;^-51<?X6/#,,1NdV\FuLod('FUEr1!`o(&O-o!W`8o-NF/*
+s*4VFD>BP!"98f0zzzzzz!!!!'#64`(%0-A58[.j_K>[XL!!(O(GM7);Fa:isVL6?s\hfHup&U`b
+;?^h>!!WG_rt,53b1[:1!58DY!!IuTbm4:QhU`5=%KHJ/zzzzz!!!!&!<<6.#R(;1!!36'#p_gQ
+q<OkVEW=g<g2a39H,?5OI)Tg21Qa0\!M09h"`"8A"p!Z_&HDjSg'n;f^&NBY"GHg"#QP%bf+%ilzzzz
+zz!!!0'!!EQ5"Tn`)!WrH0,XK9Bl_RR#s4hhPEiO8-_P!cR`G)n>OXg&*ScDXlCBX\B!94"j!!16r
+%0usIs*=YJK`B:&!!V62%K[+?zzzzzz!!NB'":,8:!rr<&!s&]R6,EB_V,VI7f4!Duj_Ea;mlSuu
+jT*CLdP0$&=pJpd#QP;6GlLA:%<DJC!"2?i[/^1Hi;Z(C!3?-@!#GV;zzzzzz"9\])z"9ei,!!!!-
+!&eWOqZ$BC@G=$.C>h>E44@3k!6HS90[MOX#AtRg!"ApQs%3;$ErSi6$V9ot!!""ss$6VbX8d5@
+(B=O;zzzzz!!!!%"98E%!!!!%"TeZ(!!!E-2J_:Js7t8TgHXe7iB?WkdoGK0aX5FicnS]/DB9&`
+%01YQ8c]BAs%NJ$8G':i!$'qs5l^ncs)S/V!!<3$zzzzz!!!-)z!!!-*!WW3#!"8icCZ5-iq/#5&
+i).CEg2=ZGT6"UhHc8=u*,?Um#9s<N!#kBi!<<r9T)]0"e`pB>!4)X!!!#gle,TIM"98E%zzzzz
+!!!''z!!3<-"U>;<#RLJ2&QFMbD!,6b;8\%?DSL4aF(TZD`BqokCEB>X,6IoG)Y&pj!#P[-!!rbX
+l<F;hZN$X!!)NLA!!!''zzzzzz!!39'z!X/`2#7(P?#ljr;</1Ehk@*:G_h6Z\^N,rfApA[A6I6]f
+*i9/e!rr<>nW<hP(]U*-#m8`C>Q=c0s.TJn:]&WA!!39'zzzzzz!X&K'!!!!#"U,&7#R:VA!!!U1
+LB!.@@)$@.;VG@B3kHg)--&=B%BCM=/iX:S!"97Kcj'ONbj$MT!-A1Z!!?EmlS&;CYPVl2$31&+zzzz
+z!!!!$"p"].#Qt,-"p+c*"TSN(%KHJ9bDNf;^Lu7ug0<r*]-unia$K8*Wu[Z^3"6Q%$k'bq#64bJ
+l6ZK2F8s2Z"'Y-Y0E;<\qdfa7zzzzzz!!!**!<<<0"98E+!WW6)!!!'1!!!ALMR['/BA-8;>O=J`
+.-W%u61PJc*LeZ@%28dN$baml!!(7.-3+$es2=s?>41]1!!]Y(AH3&;zzzzzz!!<E+!!W]3!!!3)
+!!*6'!!3W1!"-p6*WIMAEq2ra6GdqO;4iVjM(XR"JI?/l1^a?bE;rr@#F#14!=BM?lN7Cmf`-+'
+!-\D)!!WE'zzzzz!!!!#"TeZ(!s/H)!!!$"#6t54#65G<"0Lf.s!QQAnkJ+1_KT6^T8.cM/r+7o
+$Y]St$N^<Is&K4,PQ,k.$5<I*!senZs)neNG5p\)"onW'zzzzz!!!'(!WW3&!WW<&!!*')#64o4
+!#,D8Xm$l+-ei\4:#\LVG?e";LO4k1LMVMLB`Kst!W[3><W`Sjs*+PO'E@A##QWNWFpn@os5j:czzzz
+zz!!3<*!!!*&!!<3$!<<?0!!NT-'EA6;J_>p?a+gLI`I#9WfdkE/mL[Q%mgc>t@gEbK$3:(;!!!Q.
+_Z0Z:QhYt5!*T?T!!EQ,pD=,:!!36*!s&B%zz"9\i1"9\i1"98E%!<W?&"9SZ*!sJo7!!3-(!"?_q
+fntd0L8TgGHbDAk/'p9D&Bd*&%]TM=#S[7G!<0S1!"]%G!!!"cpjE>H=o[.T":+u$(^C*B!WrQ-
+!<<*"z!!!!%"9\i1"9\i1!!!!"!s&B)!s&E)"U>84!WWB(%)RSKMN,Z2Vh`6<]f4UpcoCG)b;o#$
+WW6N7'EAI?rjr.1&,jBG!!&A\I0K[Ss4IAT#QON8#6Fl,!sA],zz!!!-)"9\i1"9\i-!!!$%!<<6)
+!<E9+#6t51!!N?2_Je=)nTi_Qmi1Us\i]"<`*S@HR=.+r4[UZ'$igm)p(dW2Xktc3'P%.0!"f^c
+rB:2iDu[6Gz!sJl5"p"`*zzz!!E9%!!39)!!WQ-z!!39'!!!25Dr44XH.PCO)sgb>468]F?Aj&r
+I6(@k6Rc7K!"kLi('"K>h_+sDA,biq&J!(a4oc"0s0_n-!!!!$"U5/8!<E3$zzz"98E%!X&Q)"p=u-z
+!X&K'!!ToOhb3Kbf0\pFlrpt^jZg[iMg1Y<3`S=1.9m8]&XE&*!!KF]0)u\rrp9[t%aFr9!"<fG
+[K$:-!!!*)"pP84!<E0#zz!!!!%!!!!#"9JQ-"9JQ'!!!!#"98E%"hDZq`3n0XSYiEZ?I2U-O0]he
+=Pt=S!1a+A!&X`V=8t,X!)3Ek"99(bs#U2`B`G"2()6KB0`V=Z"U5,5!W`?(!s8W-!s8Q)!<E3%
+!<E0#!!!!"z!<N<'!Wi?%!!WE2\Ar^0[FUG1VQ-7pcr/b^ZQ/%.i#pYPSH+6A2#mVXs"scV9`M$o
+!#!i^3rfCss/5o5'__P]!!EE."pG,2!<N<)!s8W-!s&E'!<E3%!<<*"!!!$"!!!!"!WiB(!WW3#
+"oo%@a)o8-erZH"Wh3VE;W!PA*9:5[+P6[b!.k2.!!$+#2#mVMs/6&#'%R"D!!I!8VuRSIpAZiI
+"9\l4"U"l-!WiH+!s8W-!<E3%!<E3%z!!*'"!!!$$!W`?(!!!!'!"6<H9)iVM53Go?,f?M760Uk0
+8F8lc;,J'GFV-;-$SKu,('"@7aW1E_CAQ-S#9NR4%fdB1s/Q,#!<<*"zzzz!!!!"!<E6(!s&B%z
+!<WK."Tnl-#dUs4s(T_Ak>_4%_ku3Tksh47m7)%l;&*tk&MO1m0%Hg7!!*&@*<H4UqTJpE*qf7<
+!#Ck"WrN/$zzzzz!!!$#!<N?*!<<*"!!!!"!sJf2!sAT0ZFEO,C!Aj)<;7`VVVFK%7\**;7W;4%
+'lJ.+0E;J5eYX)^!<:.]!W[!3bQ%khp%Jss(7"p#!!**#zzzzz!!**$!WrN*z!!!$%"U"u2"98_5
+=k]%n2SY(&=b)R/[tB$IY&VWMW"bg:\g1i!!!!!ApE0G9s8Q^3!!r&n6N@>!s(2621Ah))z!<N?+
+!!!!"!WrN-"9\i1"9\i1!!!$$!<<*"!sT&:!WW6("98E%!!]f5g612K^PLWIJ<-M8K6qU@EQ^VG
+'V5uL,\7Pf!!"/9+92EAs(;<3#k.d\!!]n3AcMfdqu8;L!!!!"!WrQ*!!!$$!s8Z/"9\i1"9\i-
+!!*-%!!!!$"pkM9!!*3*z#..OeP1qn0Ltc'_O/07;HZ?3.b<W!?SeJ[\AJ"nB!$M"Y!!*'!B)ho;
+n,G`T#.FPD!!"eOs"=?P!!!$$!sAT(!!*-'!sA`0"9\i1"9\])!<N9%!!!**#mUM3!<`N*!!!!'
+Zu+f/h+mN7mm#f)ge.T,dR=*HeLZdpKP"@C!"9JT1!E-5-J8@6%0Q[1kaDbW2YPQ8!#sepK*DJ]
+!<<*#!<<*#!sAc3#64`(z!!!!"!WW3#!!!!#!!!!"#QOi/"Teq(D;nmX:@_*I5N5>k9)gp"7/mhK
+/<CKtAm$ni$ka:0bXWp*f`/_r"9>FbRKrmOp<j`W)rCUI"pG)0!!!$#!!!$%"9eu7zz!!!$$z!!!'#
+!!!$*!!!3,!XGK;ia1G9nkAL:i_/'!s#JLqrt*^3O:m4Y=Yg$d&f!.F7jKG6s1f'H!3,1N#QQdV
+dMDm&hZ&34"Tnc*!!**#!!*0)"U523zz!!*-$z!!3-#!!*?*!!WT.#G_=ko@Es4l.t7sh>b=b`qA?d
+eGmkeaR-k=`kK45aQ3<pg]%6Os4titp](6Himn)/YM8R3puLW!i7ll6eC3('g>(QBi8N>@f\"j/
+f\#-Dlg3ltjQ4_:f$r.!ip=b2f[\-\s8V`_f)P=*h;A7gs2"EKp#>brs3L>YmDAV;^;%t7jSel.
+rr;rsh9,cls8La3ec5ZQg[OM'jQGU^gXk!*e(E@-gtprHiRlf8f\"j/f\klWm-3Wmjj2E,eC)q-
+m)[H(e]P`.s7Gp6s75F1huDO4_=knAiqV%'ch,<G_Y;'a^Wsp]rV5.Hs8DuRb5_59rn?A^s8T:W
+nETf0kN(RUf@AC"f\,!6hV[8Mf\"j/f\"j/i8s:kl/h!fcdUIpdamFEaN`Afb/+)~>
+Q
+K
+1763.47 6195.44 0 7.9 P
+10.09 0 16.23 0.87 18.43 3.07 c
+1.75 7.9 1.75 15.8 v
+0 38.18 0 78.54 0 116.72 c
+-8.34 0 -16.67 0.45 -25.89 -1.31 c
+-6.58 -0.88 -10.53 -3.07 -13.17 -3.07 c
+-1.75 0 -3.95 -17.55 -3.95 -20.62 c
+-11.41 0 p
+0 12.29 0 25.46 0 37.74 c
+46.95 0 94.78 0 141.74 0 c
+-0.44 -37.74 -12.29 0 p
+0 7.02 -3.07 14.91 -4.38 20.62 c
+-5.7 2.18 -11.41 3.07 v
+-4.38 0.87 -17.11 1.31 -27.21 1.31 c
+0 -38.17 0 -78.54 0 -116.72 c
+0 -3.5 1.76 -15.36 2.64 -15.8 c
+3.94 -2.63 13.16 -3.07 18.86 -3.07 c
+0 -7.9 p
+-24.57 0 -48.7 0 -73.28 0 c
+f
+2270.73 6340.69 0 10.97 P
+23.26 0 48.71 0 71.97 0 c
+0 -10.97 p
+-5.7 0 -10.53 0 -14.92 0 c
+-1.31 -1.31 p
+0 -1.32 -2.19 -5.27 -2.19 -7.9 c
+0 -30.72 -3.07 -99.17 4.83 -109.26 c
+4.38 -5.26 8.34 -15.36 33.34 -15.36 c
+8.34 0 17.99 2.63 22.38 3.95 c
+4.38 0.87 13.61 6.58 16.23 10.53 c
+2.63 3.94 3.95 10.52 4.39 15.35 c
+3.51 28.53 2.63 63.18 2.63 93.47 c
+0 7.46 -2.63 10.53 -9.66 10.53 c
+-0.88 0 -7.02 0 -11.41 0 c
+0 10.97 p
+17.55 0 34.66 0 52.22 0 c
+0 -10.97 p
+-2.19 0 -5.7 0 -7.9 0 c
+-4.83 0 -9.66 -3.95 -9.66 -9.21 c
+0 -32.91 -0.87 -65.38 -2.19 -97.86 c
+0 -15.35 -13.17 -30.27 -28.97 -36.42 c
+-11.41 -4.39 -23.26 -5.71 -37.3 -5.27 c
+-18.43 0.88 -28.08 3.51 -31.59 3.95 c
+-19.74 6.58 -31.15 19.3 -31.15 50.46 c
+0 64.94 p
+0 12.29 -0.88 17.54 -0.88 19.3 c
+0 3.95 -3.07 10.1 -7.46 10.1 c
+-3.94 -0.01 -10.53 -0.01 -11.41 -0.01 c
+f
+3596.8 6195.44 0 7.02 P
+9.83 0 15.97 2.62 15.97 5.26 c
+-0.41 43.87 p
+-9.83 17.55 -31.54 55.73 -40.95 59.68 c
+-9.02 0.44 -0.82 8.78 54.06 0 p
+4.5 0 2.46 -8.34 y
+-11.47 -1.31 -12.7 0.45 -9.42 -5.7 c
+24.16 -41.69 p
+6.15 8.78 16.8 24.57 18.84 27.65 c
+23.75 34.66 -5.74 6.14 -0.41 28.08 c
+34.4 0 -0.42 -7.89 p
+-9 -0.45 -15.97 -15.37 -27.44 -31.17 c
+0 -0.44 -18.83 -27.2 -18.83 -29.4 c
+0.42 -46.07 p
+5.32 -3.07 11.06 -3.07 18.02 -3.07 c
+0 -7.46 p
+-5.74 0 -9.83 0 -12.7 0 c
+-5.74 0 -12.7 0 -19.66 0 c
+-8.18 0 -13.92 0 -18.02 0 c
+-5.33 0.01 -6.14 0.01 -10.23 0.01 c
+f
+3449.44 6195.44 0 7.46 2.83 0 P
+5.63 0 9.66 1.31 10.86 1.31 c
+1.62 1.76 1.62 6.14 1.62 13.6 c
+0 3.08 p
+0 29.83 0 60.11 0 89.95 c
+-6.05 0 -13.3 0 -19.34 0 c
+-6.85 0 -10.87 -3.07 -13.7 -6.58 c
+-2.82 -3.07 -2.82 -7.46 v
+0 -1.31 0 -7.46 y
+-8.06 0 p
+0 10.54 0 20.62 0 31.16 c
+115.18 0 -0.41 -31.59 -7.25 0 p
+-0.81 3.51 -0.81 6.58 v
+0 5.7 -1.61 8.34 -4.02 11.41 c
+-2.83 3.95 -6.05 3.95 -10.87 3.95 c
+-20.54 0 p
+0 -30.27 0 -62.75 0 -93.03 c
+0 -6.14 2.42 -11.84 y
+6.84 -3.07 12.49 -3.07 v
+2.82 0 0 -7.46 p
+-6.85 0 -12.49 0 -17.73 0 c
+-4.42 0 -11.27 0 -13.69 0 c
+-4.43 0 -8.46 0 -13.69 0 c
+-2.83 0 -9.67 0 -15.31 0 c
+f
+3330.67 6195.44 0 7.46 P
+9.73 0 15.39 1.76 15.39 14.91 c
+0 78.98 p
+0 15.81 -6.88 14.92 -16.6 14.92 c
+0 8.78 p
+19.45 0 38.48 0 57.92 0 c
+0 -8.78 p
+-10.13 0 -15.39 1.31 -15.39 -15.36 c
+0 -78.54 p
+0 -9.66 4.86 -14.91 15.39 -14.91 c
+0 -7.46 p
+-19.45 0 -37.26 0 -56.71 0 c
+f
+2648.77 6195.88 0 7.46 P
+9.72 0 15.39 1.76 15.39 14.91 c
+0 78.98 p
+0 15.81 -6.89 14.92 -16.61 14.92 c
+0 8.78 p
+19.44 0 38.48 0 57.92 0 c
+0 -8.78 p
+-10.13 0 -15.39 1.31 -15.39 -15.35 c
+0 -78.55 p
+0 -9.65 4.86 -14.91 15.39 -14.91 c
+0 -7.46 p
+-19.44 0 -37.26 0 -56.7 0 c
+f
+3201.78 6231.42 5.26 2.19 P
+7.7 3.07 1.21 -21.5 8.5 -22.38 c
+13.78 -7.9 25.12 -7.9 v
+11.75 0 27.56 6.14 27.56 22.38 c
+0 17.12 -21.49 20.62 -32.02 22.38 c
+-5.26 0.87 -21.47 4.83 -28.77 11.85 c
+-6.49 6.58 -8.11 16.23 -8.11 23.69 c
+0 13.6 5.26 23.26 10.54 27.65 c
+6.08 5.26 22.29 11.41 37.68 11.41 c
+12.56 0 25.53 -2.19 36.06 -6.58 c
+-3.23 -26.33 -5.27 0 -5.26 14.48 p
+-4.46 4.39 -14.18 7.9 -23.9 7.9 c
+-16.21 0 -32.82 -24.14 -16.62 -35.1 c
+5.26 -3.51 25.53 -7.02 34.84 -8.34 c
+11.76 -1.31 28.78 -14.04 28.78 -29.83 c
+0 -14.49 -2.02 -25.46 -13.78 -35.54 c
+-20.26 -17.12 -56.74 -13.6 -80.23 -0.88 c
+2.85 28.96 p f
+3038.21 6195.44 0 7.46 P
+11.7 0 17.34 0.87 17.34 15.8 c
+0.41 84.25 p
+0 8.78 -0.82 8.78 -6.86 8.78 c
+-2.83 0 -6.86 0 -10.89 0 c
+0 8.78 p
+21.38 0 44.77 0 65.74 0 c
+15.33 0 25.02 -2.63 33.08 -8.78 c
+9.27 -6.58 11.29 -27.2 4.03 -35.98 c
+-5.24 -6.58 -13.71 -11.85 -24.6 -16.24 c
+2.02 -2.63 38.31 -56.6 45.17 -56.6 c
+1.21 0 0.81 -7.46 p
+-10.5 0 -24.6 0 -35.09 0 c
+-0.82 1.31 -41.14 61.43 -41.14 62.74 c
+0 4.39 p
+11.3 0 20.57 4.39 y
+5.65 3.5 11.29 11.85 11.29 19.3 c
+0 9.22 -2.82 14.49 -7.26 19.75 c
+-2.82 3.94 -8.86 7.02 -15.32 7.02 c
+-6.86 0 -10.5 -1.31 -14.52 -1.31 c
+0 -29.83 0 -61.86 0 -92.58 c
+0 -15.81 4.83 -16.23 16.54 -16.23 c
+0 -7.46 p
+-19.77 -0.02 -40.74 -0.02 -60.5 -0.02 c
+f
+2801.44 6195.4 -42.06 101.5 P
+-2.66 7.27 -9.47 14.98 -17.05 14.98 c
+0 8.57 p
+18.18 0 35.99 0 54.18 0 c
+0 -8.57 p
+-10.22 -0.42 -20.46 1.71 -12.88 -13.27 c
+30.7 -72.82 21.98 56.97 7.95 21.83 p
+2.66 6.86 0 7.28 y
+-3.79 0 -7.95 0 -12.88 0 c
+0 8.57 p
+12.5 0 26.15 0 38.65 0 c
+0 -8.57 p
+-6.44 0 -10.23 -4.28 -12.88 -10.27 c
+-43.95 -106.22 -11.74 0 0 0.01 p f
+2468.21 6195.44 0 7.46 P
+3.19 0 8.38 0 11.18 0 c
+4 0 6.79 3.07 6.79 7.46 c
+0 32.91 0 67.58 0 101.37 c
+-5.99 0 -11.98 0 -17.98 0 c
+0 8.78 p
+12.38 0 27.17 0 39.54 0 c
+77.5 -90.83 p
+0 24.57 0 48.7 0 73.28 c
+0 1.31 -0.8 8.34 -5.59 8.78 c
+-5.19 0 -6.79 0 -10.78 0 c
+0 8.78 p
+13.58 0 28.76 0 41.94 0 c
+0 -8.78 p
+-4 0 -7.18 0 -9.98 0 c
+-1.6 0 -3.6 -4.39 -3.6 -8.78 c
+0 -107.5 -17.58 0 p
+-3.19 0 -8.38 8.34 -9.58 10.53 c
+-71.9 83.37 p
+0 -26.33 0 -52.65 0 -78.98 c
+0 -2.62 1.2 -7.46 4 -7.46 c
+3.2 0 6.39 0 9.59 0 c
+0 -7.46 p
+-14.39 0 -29.17 0 -43.55 0 c
+f
+2906.78 6195.44 m
+0 12.72 11.28 -0.87 11.28 23.7 c
+0 77.66 p
+0 4.39 -2.92 10.53 -7.1 14.92 c
+-4.18 0 -10.02 0 v
+0 8.78 p
+7.1 0 18.38 0 25.47 0 c
+11.28 0 14.2 0 20.05 0 c
+2.92 0 7.1 0 15.46 0 c
+10.02 0 21.3 0 37.16 0 c
+1.26 -4.38 p
+0 -4.39 0 -4.39 0 -13.17 c
+0 -4.83 -1.26 -6.15 -1.26 -7.46 c
+-5.84 0 p
+0 1.31 0 1.31 0 2.63 c
+0 3.07 -2.92 4.83 -2.92 6.14 c
+-1.25 0 -7.1 7.46 -11.27 7.46 c
+-4.18 0 -10.02 0 -21.3 0 c
+-2.92 0 -4.18 0 v
+-2.92 0 -7.51 0 -9.18 0 c
+0 -44.32 33.41 0 p
+1.26 0 1.26 -0.44 1.26 0.87 c
+0 3.07 2.93 11.42 2.93 12.73 c
+7.92 0 0 -37.74 ^ p
+0 0.87 -3.34 10.53 -3.77 12.29 c
+-33.83 0 0 -49.58 9.18 0 p
+8.36 0 18.38 0 24.22 0 c
+4.18 0 11.28 1.31 12.53 1.31 c
+2.92 1.32 2.92 3.07 v
+0 3.08 1.67 10.54 2.92 14.92 c
+8.36 0 p
+0 -4.38 -2.51 -11.84 -2.51 -16.67 c
+0 -2.63 -1.66 -10.1 -1.66 -13.17 c
+-1.26 0 -5.43 0 y
+-1.67 0 -4.59 0 -5.84 0 c
+-7.1 0 -14.2 0 -27.14 0 c
+-11.28 0 -21.3 0 -24.22 0 c
+-5.44 0 -14.2 0 -16.7 0 c
+-2.93 0.01 -10.03 0.01 -14.21 0.01 c
+f
+2068.23 6195.88 m
+0 12.73 11.28 -0.87 11.28 23.7 c
+0 77.66 p
+0 4.39 -2.92 10.54 -7.1 14.92 c
+-4.18 0 -10.02 0 v
+0 8.78 p
+7.1 0 18.37 0 25.47 0 c
+11.27 0 14.19 0 20.04 0 c
+2.92 0 7.1 0 15.45 0 c
+10.02 0 21.3 0 37.17 0 c
+1.26 -4.39 p
+0 -4.39 0 -4.39 0 -13.17 c
+0 -4.83 -1.26 -6.15 -1.26 -7.46 c
+-5.85 0 p
+0 1.31 0 1.31 0 2.63 c
+0 3.07 -2.92 4.83 -2.92 6.14 c
+-1.26 0 -7.1 7.46 -11.28 7.46 c
+-4.17 0 -10.02 0 -21.3 0 c
+-2.92 0 -4.18 0 v
+-2.93 0 -7.51 0 -9.18 0 c
+0 -44.31 33.41 0 p
+1.25 0 1.25 -0.45 1.25 0.86 c
+0 3.08 2.93 11.42 2.93 12.73 c
+7.94 0 0 -37.74 ^ p
+0 0.87 -3.34 10.53 -3.76 12.29 c
+-33.82 0 0 -49.58 9.18 0 p
+8.35 0 18.38 0 24.22 0 c
+4.18 0 11.27 1.32 12.53 1.32 c
+2.92 1.31 2.92 3.07 v
+0 3.07 1.67 10.53 2.93 14.91 c
+8.34 0 p
+0 -4.38 -2.5 -11.84 -2.5 -16.67 c
+0 -2.63 -1.66 -10.1 -1.66 -13.17 c
+-1.26 0 -5.43 0 y
+-1.67 0 -4.59 0 -5.85 0 c
+-7.1 0 -14.19 0 -27.14 0 c
+-11.28 0 -21.3 0 -24.22 0 c
+-5.43 0 -14.19 0 -16.7 0 c
+-2.92 0.01 -10.02 0.01 -14.19 0.01 c
+f
+1889.68 6195.44 0 7.46 P
+15.47 -0.44 17.1 0.43 17.1 14.91 c
+0 78.98 p
+0 11.85 -2.85 14.92 y
+-3.66 0 -9.78 0 -13.85 0 c
+0 8.78 p
+19.14 0 40.72 0 59.86 0 c
+0 -8.78 p
+-4.07 0 -10.18 0 -14.26 0 c
+-1.22 -1.32 -2.44 -3.94 -2.44 -15.36 c
+0 -10.97 0 -27.2 0 -29.4 c
+20.36 0 42.34 0 62.3 0 c
+0 29.83 p
+0 10.1 -1.63 14.49 -4.07 14.92 c
+-11.4 0 -13.85 0 v
+0 8.78 p
+18.73 0 40.72 0 59.46 0 c
+0 -8.78 p
+-9.78 0 -13.85 0 y
+-2.03 -3.07 -2.44 -5.26 -2.44 -16.23 c
+-0.41 -76.35 p
+0 -13.6 4.89 -17.12 16.7 -17.12 c
+0 -6.58 p
+-18.73 0 -40.72 0 -59.46 0 c
+0 7.46 p
+13.44 0 17.92 2.63 17.92 17.99 c
+0 35.54 p
+-20.36 0 -41.94 0 -62.3 0 c
+0 -37.3 p
+0 -12.29 0 -16.23 16.7 -16.23 c
+0 -7.46 -60.26 0 0 0.01 p f
+4514.77 6213 m
+-11.41 10.09 -29.4 17.11 -43.87 38.17 c
+30.72 10.53 35.98 16.68 54.84 29.84 c
+21.94 15.8 18.44 39.93 7.9 43 c
+-14.05 -31.6 -20.62 -31.6 -42.56 -51.34 c
+-9.66 -6.58 -25.46 -16.67 -31.16 -14.48 c
+-9.66 3.94 -20.62 1.76 -28.97 -2.64 c
+59.24 136.9 -29.4 -7.02 -28.52 -70.21 p
+-31.16 -3.5 -54.42 -14.48 -82.5 -28.51 c
+6.58 8.78 17.98 32.03 0 32.03 c
+-15.36 0 -36.42 -4.83 -44.32 -9.66 c
+-21.5 -10.53 p
+-5.7 34.66 -35.98 25.89 -53.1 18.86 c
+-17.11 -6.58 -57.48 -40.81 -68.01 -82.94 c
+-10.54 -42.13 13.6 -53.52 42.12 -42.55 c
+38.62 15.35 68.46 58.36 77.67 90.83 c
+7.02 7.02 46.51 26.33 49.58 17.99 c
+4.38 -6.15 -48.27 -106.19 -48.27 -111.02 c
+25.02 8.78 p
+47.39 96.1 86.88 102.24 114.97 96.98 c
+-52.22 -107.95 34.22 17.12 p
+7.02 18.86 23.7 45.64 48.71 18.86 c
+10.09 -5.7 48.26 -30.71 64.5 -35.98 c
+16.23 -5.7 56.17 3.95 58.8 22.82 c
+-20.63 -18.88 -42.14 -7.46 -63.19 2.63 c
+h
+4242.71 6244.58 m
+-14.92 -26.33 -37.3 -41.68 -48.27 -35.54 c
+-10.97 6.14 -7.46 32.91 7.47 59.68 c
+14.91 26.77 38.61 43.87 49.14 38.17 c
+10.54 -5.7 6.57 -35.98 -8.34 -62.31 c
+f
+4199.56 6347.05 m
+-22.16 -26.42 -52.83 -64.77 -78.41 -96.3 c
+-30.68 -34.94 -52.84 -62.21 -83.51 -87.78 c
+-46.03 -40.06 -105.69 -93.75 -173.86 -90.34 c
+-55.4 2.55 -83.52 40.9 -95.46 83.51 c
+17.06 -35.79 57.11 -63.07 86.94 -64.77 c
+96.3 -7.68 177.27 98.02 233.51 161.92 c
+50.29 61.38 p
+-33.24 -28.98 -89.5 -75 -111.65 -84.38 c
+-6.82 -4.26 -12.78 -4.26 -9.38 4.26 c
+20.46 46.86 39.2 90.34 62.22 143.18 c
+11.93 34.09 -0.86 42.6 -21.31 35.78 c
+10.22 8.52 34.95 14.49 49.44 10.23 c
+15.34 -6.82 12.78 -31.53 -9.38 -72.45 c
+-22.16 -40.9 -20.46 -48.58 -30.69 -75 c
+47.73 34.94 86.94 66.49 122.74 99.72 c
+24.71 25.56 95.46 72.44 131.25 38.35 c
+-40.91 10.22 -56.25 -1.71 -77.56 -23.02 c
+-17.04 -14.46 -30.67 -29.8 -45.17 -44.3 c
+f
+3830.23 6305.14 m
+8.44 -10.21 3.11 -39.52 -14.21 -66.17 c
+-18.21 -24.86 -39.52 -36.86 -47.52 -26.2 c
+-8.44 10.66 -3.11 39.97 14.22 66.17 c
+17.75 24.87 39.52 37.31 47.51 26.2 c
+3860.87 6299.37 m
+0 -3.12 1.34 19.1 -15.54 25.31 c
+-16.87 6.22 -56.85 -10.66 -81.72 -42.64 c
+-24.86 -31.97 -35.98 -78.17 -17.32 -87.94 c
+18.66 -9.77 45.3 0.45 72.83 26.2 c
+13.78 12.88 34.19 44.86 41.74 63.07 c
+44.86 0 -22.2 -53.3 p
+-21.31 -49.3 -47.97 -83.05 -102.59 -58.18 c
+30.64 -31.98 95.05 -3.55 116.36 39.52 c
+30.65 71.95 31.09 0 p
+19.54 0 56.85 25.31 48.86 47.52 c
+-20.44 -29.31 -42.19 -29.31 -71.95 -27.98 c
+4.44 16.87 18.66 59.96 39.53 61.74 c
+20.87 1.77 10.22 -11.55 8.87 -25.32 c
+15.11 2.22 33.76 40.42 4.89 39.08 c
+-28.86 -1.33 -43.97 -18.2 -54.18 -31.53 c
+-10.21 -13.32 -15.98 -30.64 -22.2 -43.97 c
+-19.09 0 -40.42 2.67 -51.97 -3.55 c
+f
+1794.31 6013.7 1.06 0.94 P
+11.25 -0.54 24.02 -0.82 38.32 -0.82 c
+44.53 0.7 p
+20 0 35.16 -2.63 45.47 -7.91 c
+10.31 -5.26 17.83 -12.79 22.56 -22.55 c
+4.73 -9.76 7.09 -20.58 7.09 -32.46 c
+0 -15.31 -3.32 -30.77 -9.96 -46.34 c
+-6.64 -15.59 -17.62 -28.98 -32.93 -40.19 c
+-15.31 -11.21 -33.13 -16.82 -53.44 -16.82 c
+-4.06 0 -11.21 0.16 -21.45 0.47 c
+-9.84 0.31 -17.3 0.47 -22.38 0.47 c
+-13.59 0 -25.35 -0.23 -35.27 -0.7 c
+-0.82 0.82 0.82 6.21 1.17 1.06 3.4 0.94 p
+4.84 1.1 7.79 2.24 8.85 3.46 c
+1.06 1.2 2.66 7.59 4.81 19.16 c
+2.15 11.57 5.92 33.02 11.31 64.39 c
+5.39 31.38 8.09 49.63 8.09 54.79 c
+0 1.95 -0.49 3.38 -1.46 4.27 c
+-0.98 0.9 -2.17 1.46 -3.58 1.64 c
+-1.41 0.19 -6.83 0.57 -16.29 1.12 c
+-0.82 0.94 0.94 6.43 h
+1823.14 5863.35 16.41 -2.22 P
+7.5 -1.1 13.9 -1.64 19.22 -1.64 c
+8.75 0 16.02 1.18 21.8 3.58 c
+5.78 2.38 10.86 6.07 15.23 11.07 c
+4.38 5 8.28 11.06 11.72 18.17 c
+3.44 7.11 6.45 16.31 9.02 27.59 c
+2.58 11.3 3.86 22.68 3.86 34.17 c
+0 7.34 -0.86 13.9 -2.58 19.69 c
+-1.72 5.78 -3.97 10.58 -6.74 14.42 c
+-2.77 3.83 -6.19 6.95 -10.26 9.38 c
+-4.06 2.42 -8.44 4.05 -13.13 4.86 c
+-4.69 0.83 -10.35 1.23 -16.99 1.23 c
+-9.3 0 -17.11 -0.47 -23.44 -1.41 c
+-0.39 -3.75 -1.83 -11.91 -4.34 -24.5 c
+-10.19 -56.96 p
+-5.15 -29.38 -8.36 -48.51 -9.61 -57.42 c
+f
+2049.78 5875.89 2.7 -4.81 -0.35 -1.41 P
+-13.75 -9.77 -24.86 -16.46 -33.34 -20.1 c
+-8.47 -3.63 -15.96 -5.46 -22.44 -5.46 c
+-5.7 0 -11.06 1.21 -16.06 3.63 c
+-5 2.42 -8.58 5.92 -10.72 10.5 c
+-2.14 4.58 -3.22 9.39 -3.22 14.47 c
+0 8.44 1.62 19.26 4.86 32.46 c
+3.24 13.21 7.36 23.01 12.36 29.42 c
+5 6.41 13.1 12.82 24.32 19.22 c
+11.22 6.4 20.84 9.61 28.89 9.61 c
+6.8 0 12.34 -1.74 16.64 -5.21 c
+4.3 -3.47 6.45 -8.46 6.45 -14.94 c
+0 -7.97 -2.38 -15.18 -7.15 -21.62 c
+-4.77 -6.45 -12.67 -11.87 -23.73 -16.3 c
+-11.06 -4.41 -22.4 -7.59 -34.04 -9.54 c
+-0.86 -5.7 -1.29 -10.94 -1.29 -15.7 c
+0 -7.66 1.82 -12.87 5.45 -15.64 c
+3.63 -2.78 7.67 -4.17 12.13 -4.17 c
+3.2 0 6.87 0.6 11.02 1.82 c
+4.14 1.2 7.6 2.58 10.37 4.1 c
+2.77 1.53 8.06 4.78 15.88 9.78 c
+1.28 -0.13 h
+1995.88 5902.26 m
+16.25 3.59 27.18 9.17 32.82 16.7 c
+5.62 7.53 8.44 14.58 8.44 21.15 c
+0 3.75 -1.1 6.66 -3.28 8.74 c
+-2.18 2.06 -4.88 3.1 -8.09 3.1 c
+-6.41 0 -11.95 -3.38 -16.64 -10.14 c
+-4.7 -6.77 -9.11 -19.95 -13.25 -39.56 c
+f
+2071.81 5933.9 0.12 1.64 P
+6.1 5.16 12.46 10.23 19.1 15.23 c
+6.64 5 11.8 8.51 15.47 10.54 c
+3.67 2.03 6.91 3.05 9.73 3.05 c
+4.92 0 7.38 -2.62 7.38 -7.85 c
+0 -2.82 -0.72 -7.74 -2.17 -14.77 c
+-1.45 -7.03 -3.73 -16.64 -6.86 -28.83 c
+6.49 10.16 12.33 18.22 17.52 24.2 c
+5.19 5.97 12.22 11.9 21.1 17.82 c
+8.86 5.89 16.78 8.84 23.73 8.84 c
+2.89 0 5.34 -0.95 7.33 -2.87 c
+1.99 -1.91 3.62 -5.42 4.86 -10.54 c
+1.25 -5.11 1.87 -10.25 1.87 -15.41 c
+0 -9.61 -1.91 -20.31 -5.74 -32.11 c
+-3.83 -11.8 -7.74 -20.43 -11.72 -25.9 c
+-3.44 -4.84 -9.22 -10.06 -17.34 -15.65 c
+-8.13 -5.58 -14.9 -9.66 -20.34 -12.24 c
+-5.43 -2.58 -11.82 -3.86 -19.16 -3.86 c
+-5.08 0 -9.61 0.5 -13.59 1.52 c
+-1.8 -7.5 -3.93 -16.83 -6.38 -28.01 c
+-2.46 -11.18 -3.89 -18.01 -4.28 -20.5 c
+-0.39 -2.5 -0.7 -6.14 -0.94 -10.9 c
+-1.87 -0.08 -6.52 -0.8 -13.94 -2.17 c
+-7.42 -1.37 -11.68 -2.32 -12.78 -2.86 c
+-2.46 1.87 10.66 40.31 p
+3.67 14.92 8.18 34.98 13.54 60.18 c
+5.35 25.19 8.46 40.8 9.32 46.82 c
+0.23 1.64 0.35 3.05 0.35 4.22 c
+0 1.49 -0.35 2.72 -1.06 3.69 c
+-0.7 0.98 -1.52 1.47 -2.46 1.47 c
+-0.94 0 -2.38 -0.64 -4.34 -1.94 c
+-1.95 -1.28 -6.1 -4.35 -12.42 -9.19 c
+-1.64 0.12 -2.46 4.09 h
+2105.92 5863.35 m
+7.58 -4.22 15.12 -6.33 22.62 -6.33 c
+3.59 0 6.82 0.81 9.66 2.41 c
+2.85 1.59 5.66 4.62 8.44 9.08 c
+2.78 4.46 5.39 10.47 7.85 18.05 c
+2.46 7.58 4.53 14.92 6.21 22.03 c
+1.68 7.11 2.52 14.42 2.52 21.91 c
+0 5 -0.45 8.53 -1.34 10.61 c
+-0.9 2.06 -2.44 3.1 -4.63 3.1 c
+-2.19 0 -5.37 -1.1 -9.55 -3.28 c
+-4.18 -2.18 -8.79 -6.11 -13.83 -11.78 c
+-5.04 -5.66 -9.51 -12.16 -13.42 -19.46 c
+-3.9 -7.31 -6.54 -13.38 -7.91 -18.22 c
+-1.37 -4.84 -3.56 -14.22 -6.61 -28.13 c
+f
+2321.07 5874.13 2.58 -4.57 -0.47 -1.52 P
+-14.14 -10.39 -23.85 -17.03 -29.12 -19.92 c
+-5.27 -2.89 -9.66 -4.34 -13.18 -4.34 c
+-2.5 0 -4.47 1.06 -5.92 3.17 c
+-1.45 2.11 -2.17 4.77 -2.17 7.97 c
+0 3.28 0.62 8.05 1.87 14.3 c
+1.25 6.25 3.94 17.62 8.09 34.1 c
+-13.13 -22.5 -24.92 -38.06 -35.39 -46.7 c
+-10.47 -8.63 -19.02 -12.95 -25.66 -12.95 c
+-3.59 0 -6.7 1.6 -9.32 4.81 c
+-2.62 3.21 -3.93 8.98 -3.93 17.34 c
+0 7.34 1.1 15.9 3.28 25.66 c
+2.18 9.77 5.27 19.65 9.26 29.65 c
+2.03 5 4.43 9.04 7.21 12.14 c
+2.78 3.09 8.77 7.98 17.99 14.7 c
+9.22 6.72 15.76 10.78 19.63 12.18 c
+3.87 1.4 8.22 2.11 13.06 2.11 c
+3.44 0 7.5 -0.52 12.18 -1.58 c
+4.69 -1.05 8.98 -2.59 12.89 -4.62 c
+10.8 6.3 3.86 -2.82 p
+-1.95 -4.61 -4.34 -13.13 -7.15 -25.54 c
+-8.67 -39.61 p
+-3.05 -14.06 -4.57 -22.66 -4.57 -25.78 c
+0 -3.05 1.02 -4.57 3.05 -4.57 c
+2.5 0 8.63 3.36 18.4 10.08 c
+1.41 0 h
+2288.14 5944.09 m
+-6.95 3.51 -13.36 5.27 -19.22 5.27 c
+-6.1 0 -11.02 -2.42 -14.77 -7.26 c
+-3.75 -4.84 -7.82 -15.62 -12.18 -32.34 c
+-4.37 -16.72 -6.56 -29.1 -6.56 -37.15 c
+0 -5.86 1.56 -8.79 4.69 -8.79 c
+3.28 0 9.14 4.92 17.58 14.77 c
+8.43 9.85 15.37 20.74 20.8 32.7 c
+5.43 11.95 8.65 22.9 9.66 32.82 c
+f
+2346.38 5844.71 -2.46 2.93 P
+6.17 20.86 10.65 38.93 13.42 54.2 c
+2.77 15.27 4.16 26.03 4.16 32.28 c
+0 3.98 -0.9 5.98 -2.7 5.98 c
+-2.18 0 -7.5 -3.17 -15.94 -9.5 c
+-1.76 0.12 -2.22 3.86 0.12 1.64 p
+13.59 11.25 23.44 18.67 29.53 22.26 c
+6.09 3.59 10.58 5.39 13.48 5.39 c
+2.26 0 3.98 -0.87 5.16 -2.63 c
+1.17 -1.77 1.76 -3.85 1.76 -6.27 c
+0 -2.66 -0.31 -5.54 -0.94 -8.67 c
+-0.62 -3.13 -3.59 -15.98 -8.9 -38.55 c
+1.64 0 p
+3.67 8.59 7.58 16.72 11.72 24.38 c
+4.14 7.66 8.2 13.92 12.18 18.82 c
+3.98 4.87 7.46 8.1 10.43 9.66 c
+2.97 1.56 6.14 2.34 9.5 2.34 c
+2.11 0 4.14 -0.27 6.1 -0.82 c
+0.82 -1.17 p
+-1.17 -3.59 -2.26 -8.79 -3.28 -15.58 c
+-1.02 -6.79 -1.52 -12.18 -1.52 -16.17 c
+-2.7 -1.76 p
+-3.67 3.36 -7.78 5.04 -12.3 5.04 c
+-3.83 0 -7.44 -1.29 -10.84 -3.86 c
+-3.4 -2.58 -7.17 -7.85 -11.31 -15.82 c
+-4.14 -7.98 -7.74 -17.48 -10.78 -28.54 c
+-3.05 -11.05 -5.27 -22.55 -6.68 -34.5 c
+-4.06 -0.7 -8.5 -1.38 -13.3 -2.05 c
+-4.81 -0.66 -8.94 -1.67 -12.38 -3 c
+f
+2462.87 5946.55 -24.5 0 -0.82 1.17 0.7 4.1 1.41 1.41 P
+6.49 1.49 15.27 4.1 26.37 7.85 c
+0.16 1.8 0.7 5.58 1.64 11.37 c
+1.56 8.67 2.34 15.94 2.34 21.8 c
+4.69 1.02 11.76 3.24 21.21 6.68 c
+4.3 1.56 6.95 2.5 7.97 2.82 c
+2.7 -2.93 p
+-2.5 -7.66 -6.06 -21.56 -10.66 -41.72 c
+12.07 0 p
+9.38 0 15.98 0.31 19.81 0.94 c
+1.29 -1.87 p
+-1.1 -3.59 -1.99 -7.34 -2.7 -11.25 c
+-1.52 -1.17 p
+-5.78 0.54 -12.11 0.82 -18.98 0.82 c
+-12.54 0 p
+-1.33 -6.56 -2.89 -14.02 -4.69 -22.38 c
+-4.92 -22.97 -3.63 -17.82 p
+-0.94 -5 -1.5 -8.24 -1.7 -9.73 c
+-0.19 -1.49 -0.3 -2.82 -0.3 -3.98 c
+0 -2.03 0.53 -3.55 1.58 -4.57 c
+1.06 -1.02 2.36 -1.52 3.93 -1.52 c
+1.41 0 2.93 0.34 4.57 1 c
+1.64 0.66 3.86 1.87 6.68 3.63 c
+2.82 1.76 7.7 5.06 14.65 9.9 c
+1.64 -0.12 2.34 -4.57 -0.23 -1.41 p
+-17.97 -13.13 -29.78 -21.06 -35.45 -23.79 c
+-5.66 -2.74 -10.22 -4.1 -13.66 -4.1 c
+-4.53 0 -7.95 1.41 -10.26 4.22 c
+-2.3 2.81 -3.46 6.49 -3.46 11.02 c
+0 2.89 0.39 6.49 1.17 10.78 c
+0.78 4.3 2.97 14.61 6.56 30.94 c
+6.1 28.12 9.22 43.28 9.38 45.46 c
+f
+2531.54 5844.71 -2.34 3.4 P
+0.08 0.31 1.02 3.32 2.82 9.02 c
+3.83 12.26 7.6 26.95 11.31 44.06 c
+3.71 17.11 5.57 28.55 5.57 34.34 c
+0 1.56 -0.35 2.83 -1.06 3.81 c
+-0.7 0.98 -1.52 1.47 -2.46 1.47 c
+-0.86 0 -2.03 -0.49 -3.51 -1.47 c
+-1.49 -0.97 -5.9 -4.19 -13.24 -9.66 c
+-1.64 0.12 -2.34 4.1 0.12 1.64 p
+5.62 4.77 12.21 10 19.74 15.7 c
+7.54 5.7 13.09 9.3 16.64 10.78 c
+3.55 1.49 6.5 2.22 8.85 2.22 c
+2.03 0 3.62 -0.74 4.74 -2.22 c
+1.13 -1.48 1.7 -3.24 1.7 -5.27 c
+0 -2.42 -0.54 -6.33 -1.64 -11.72 c
+-1.1 -5.39 -4.3 -19.73 -9.61 -43.01 c
+10.23 19.06 21.76 34.2 34.57 45.42 c
+12.82 11.2 23.2 16.82 31.17 16.82 c
+2.42 0 4.42 -0.87 5.98 -2.64 c
+1.56 -1.75 2.34 -4.04 2.34 -6.85 c
+0 -2.26 -0.35 -5.47 -1.06 -9.61 c
+-0.7 -4.14 -2.03 -10.12 -3.98 -17.93 c
+-6.45 -25.19 p
+9.92 19.77 21.68 34.98 35.27 45.65 c
+13.59 10.66 24.73 15.99 33.4 15.99 c
+2.82 0 4.92 -1.1 6.33 -3.28 c
+1.41 -2.18 2.11 -4.92 2.11 -8.2 c
+0 -5.54 -1.45 -13.83 -4.34 -24.84 c
+-8.98 -33.51 -13.48 -53.17 -13.48 -58.94 c
+0 -2.66 0.9 -3.98 2.7 -3.98 c
+2.11 0 8.09 3.59 17.93 10.78 c
+1.41 -0.12 2.58 -4.57 -0.35 -1.52 p
+-13.05 -9.53 -22.66 -16.06 -28.83 -19.57 c
+-6.18 -3.51 -11.21 -5.27 -15.12 -5.27 c
+-2.66 0 -4.78 1.02 -6.38 3.05 c
+-1.6 2.03 -2.4 4.5 -2.4 7.38 c
+0 3.51 0.68 8.4 2.05 14.65 c
+1.37 6.25 3.81 16.1 7.33 29.53 c
+3.2 12.42 5.26 20.88 6.15 25.37 c
+0.9 4.5 1.34 7.91 1.34 10.26 c
+0 3.67 -1.25 5.5 -3.75 5.5 c
+-1.87 0 -4.65 -1.14 -8.32 -3.4 c
+-3.67 -2.26 -8.24 -6.46 -13.71 -12.6 c
+-5.47 -6.13 -10.34 -13.2 -14.59 -21.2 c
+-4.26 -8.02 -7.95 -18.17 -11.07 -30.47 c
+-3.13 -12.31 -4.69 -20.34 -4.69 -24.09 c
+-5.62 0 -13.9 -1.14 -24.84 -3.4 c
+-2.82 3.4 p
+4.46 11.25 9 26.85 13.66 46.82 c
+4.65 19.95 6.98 33.38 6.98 40.25 c
+0 1.64 -0.37 2.89 -1.11 3.75 c
+-0.74 0.86 -1.66 1.29 -2.75 1.29 c
+-2.03 0 -4.98 -1.25 -8.85 -3.75 c
+-3.86 -2.5 -8.59 -7.42 -14.18 -14.77 c
+-5.58 -7.34 -10.39 -14.9 -14.42 -22.68 c
+-4.02 -7.77 -7.26 -16.94 -9.73 -27.53 c
+-2.46 -10.59 -3.81 -17.99 -4.04 -22.21 c
+-5.08 -0.04 -13.63 -1.57 -25.66 -4.62 c
+f
+2809.97 5875.89 2.7 -4.81 -0.35 -1.41 P
+-13.75 -9.77 -24.86 -16.46 -33.34 -20.1 c
+-8.47 -3.63 -15.96 -5.46 -22.44 -5.46 c
+-5.7 0 -11.06 1.21 -16.06 3.63 c
+-5 2.42 -8.58 5.92 -10.72 10.5 c
+-2.14 4.58 -3.22 9.39 -3.22 14.47 c
+0 8.44 1.62 19.26 4.86 32.46 c
+3.24 13.21 7.36 23.01 12.36 29.42 c
+5 6.41 13.1 12.82 24.32 19.22 c
+11.22 6.4 20.84 9.61 28.89 9.61 c
+6.8 0 12.34 -1.74 16.64 -5.21 c
+4.3 -3.47 6.45 -8.46 6.45 -14.94 c
+0 -7.97 -2.38 -15.18 -7.15 -21.62 c
+-4.77 -6.45 -12.67 -11.87 -23.73 -16.3 c
+-11.06 -4.41 -22.4 -7.59 -34.04 -9.54 c
+-0.86 -5.7 -1.29 -10.94 -1.29 -15.7 c
+0 -7.66 1.82 -12.87 5.45 -15.64 c
+3.63 -2.78 7.67 -4.17 12.13 -4.17 c
+3.2 0 6.87 0.6 11.02 1.82 c
+4.14 1.2 7.6 2.58 10.37 4.1 c
+2.77 1.53 8.06 4.78 15.88 9.78 c
+1.28 -0.13 h
+2756.07 5902.26 m
+16.25 3.59 27.18 9.17 32.82 16.7 c
+5.62 7.53 8.44 14.58 8.44 21.15 c
+0 3.75 -1.1 6.66 -3.28 8.74 c
+-2.18 2.06 -4.88 3.1 -8.09 3.1 c
+-6.41 0 -11.95 -3.38 -16.64 -10.14 c
+-4.69 -6.77 -9.1 -19.95 -13.25 -39.56 c
+f
+2835.99 5844.83 -3.05 2.93 P
+2.42 6.1 5.54 16.26 9.38 30.52 c
+3.83 14.26 6.62 26.66 8.38 37.21 c
+1.75 10.54 2.64 17.26 2.64 20.16 c
+0 2.66 -0.9 3.98 -2.7 3.98 c
+-2.42 0 -8.05 -3.28 -16.87 -9.84 c
+-1.64 0.12 -2.34 4.1 0.12 1.52 p
+4.06 3.44 8.79 7.25 14.18 11.43 c
+5.39 4.17 10.27 7.66 14.65 10.42 c
+4.38 2.78 7.66 4.54 9.84 5.28 c
+2.18 0.74 4.18 1.11 5.98 1.11 c
+4.3 0 6.45 -2.54 6.45 -7.62 c
+0 -3.67 -0.7 -9.01 -2.11 -15.99 c
+-1.41 -6.99 -4.34 -18.89 -8.79 -35.69 c
+8.83 16.33 19.94 30.27 33.34 41.83 c
+13.39 11.56 24.28 17.34 32.64 17.34 c
+6.64 0 9.96 -3.71 9.96 -11.14 c
+0 -4.06 -0.9 -9.86 -2.7 -17.41 c
+-1.8 -7.53 -4.69 -18.61 -8.67 -33.22 c
+-2.66 -9.69 -4.47 -17.25 -5.45 -22.67 c
+-0.98 -5.44 -1.46 -8.93 -1.46 -10.5 c
+0 -2.89 0.94 -4.34 2.82 -4.34 c
+3.05 0 8.79 3.2 17.22 9.61 c
+1.41 -0.12 2.58 -4.57 -0.35 -1.52 p
+-13.36 -10.08 -22.93 -16.54 -28.71 -19.39 c
+-5.78 -2.85 -10.74 -4.28 -14.88 -4.28 c
+-3.28 0 -5.49 1.26 -6.62 3.82 c
+-1.14 2.54 -1.7 5.17 -1.7 7.9 c
+0 6.33 2.74 19.22 8.2 38.67 c
+6.02 21.1 9.02 34.57 9.02 40.43 c
+0 3.2 -1.52 4.81 -4.57 4.81 c
+-1.41 0 -3.34 -0.62 -5.8 -1.87 c
+-2.46 -1.25 -6.06 -4.32 -10.78 -9.19 c
+-4.73 -4.89 -9.06 -10.42 -13.01 -16.58 c
+-3.94 -6.17 -7.38 -12.85 -10.31 -20.04 c
+-2.93 -7.19 -5.37 -14.9 -7.33 -23.14 c
+-1.95 -8.25 -3.17 -14.79 -3.63 -19.63 c
+-9.91 -0.79 -18.34 -2.27 -25.3 -4.46 c
+f
+2996.19 5946.55 -24.5 0 -0.82 1.17 0.7 4.1 1.41 1.41 P
+6.49 1.49 15.27 4.1 26.37 7.85 c
+0.16 1.8 0.7 5.58 1.64 11.37 c
+1.56 8.67 2.34 15.94 2.34 21.8 c
+4.69 1.02 11.76 3.24 21.21 6.68 c
+4.3 1.56 6.95 2.5 7.97 2.82 c
+2.7 -2.93 p
+-2.5 -7.66 -6.06 -21.56 -10.66 -41.72 c
+12.07 0 p
+9.38 0 15.98 0.31 19.81 0.94 c
+1.29 -1.87 p
+-1.1 -3.59 -1.99 -7.34 -2.7 -11.25 c
+-1.52 -1.17 p
+-5.78 0.54 -12.11 0.82 -18.98 0.82 c
+-12.54 0 p
+-1.33 -6.56 -2.89 -14.02 -4.69 -22.38 c
+-4.92 -22.97 -3.63 -17.82 p
+-0.94 -5 -1.5 -8.24 -1.7 -9.73 c
+-0.19 -1.49 -0.3 -2.82 -0.3 -3.98 c
+0 -2.03 0.53 -3.55 1.58 -4.57 c
+1.06 -1.02 2.36 -1.52 3.93 -1.52 c
+1.41 0 2.93 0.34 4.57 1 c
+1.64 0.66 3.86 1.87 6.68 3.63 c
+2.82 1.76 7.7 5.06 14.65 9.9 c
+1.64 -0.12 2.34 -4.57 -0.23 -1.41 p
+-17.97 -13.13 -29.78 -21.06 -35.45 -23.79 c
+-5.66 -2.74 -10.22 -4.1 -13.66 -4.1 c
+-4.53 0 -7.95 1.41 -10.26 4.22 c
+-2.3 2.81 -3.46 6.49 -3.46 11.02 c
+0 2.89 0.39 6.49 1.17 10.78 c
+0.78 4.3 2.97 14.61 6.56 30.94 c
+6.1 28.12 9.22 43.28 9.38 45.46 c
+f
+3124.39 5881.98 m
+0 7.26 1.23 16.39 3.69 27.37 c
+2.46 10.98 6.68 20.15 12.66 27.54 c
+5.98 7.38 14.04 13.7 24.19 18.98 c
+10.17 5.26 20.63 7.9 31.41 7.9 c
+11.1 0 20.12 -3.17 27.07 -9.5 c
+6.95 -6.33 10.43 -15.82 10.43 -28.48 c
+0 -11.49 -2.15 -23.22 -6.44 -35.22 c
+-4.3 -11.98 -10.02 -20.76 -17.17 -26.3 c
+-7.14 -5.54 -14.65 -10.29 -22.5 -14.23 c
+-7.86 -3.94 -16.78 -5.92 -26.78 -5.92 c
+-9.53 0 -16.95 1.83 -22.26 5.5 c
+-5.31 3.67 -9.02 8.4 -11.14 14.18 c
+-2.11 5.78 -3.16 11.85 -3.16 18.18 c
+h
+3152.05 5882.92 m
+0 -9.53 1.8 -16.45 5.39 -20.74 c
+3.59 -4.3 8.74 -6.45 15.46 -6.45 c
+4.62 0 8.74 1.29 12.37 3.86 c
+3.63 2.58 6.99 7.21 10.08 13.89 c
+3.09 6.68 5.58 14.98 7.5 24.9 c
+1.92 9.92 2.87 18.94 2.87 27.07 c
+0 10.23 -1.99 17.38 -5.98 21.45 c
+-3.98 4.06 -8.83 6.1 -14.53 6.1 c
+-6.02 0 -11.3 -2.3 -15.87 -6.91 c
+-4.57 -4.61 -8.59 -13.61 -12.07 -27.01 c
+-3.48 -13.4 -5.22 -25.45 -5.22 -36.15 c
+f
+3257.86 5947.61 0.83 4.22 1.28 1.29 P
+1.8 0.62 5.36 1.72 10.66 3.28 c
+5.32 1.56 9.42 3.01 12.3 4.34 c
+0.23 0.54 0.75 2.7 1.52 6.45 c
+1.34 5.78 2.5 9.94 3.52 12.48 c
+1.01 2.54 2.77 5.34 5.27 8.38 c
+2.5 3.05 7.07 7.38 13.7 13.01 c
+6.64 5.62 12.8 10.45 18.46 14.48 c
+5.66 4.02 9.92 6.58 12.78 7.67 c
+2.86 1.1 5.99 1.64 9.44 1.64 c
+3.66 0 7.18 -0.66 10.54 -1.99 c
+-3.04 -10.39 -5.27 -20.5 -6.68 -30.35 c
+-3.5 -0.82 p
+-6.02 9.22 -12.03 13.83 -18.06 13.83 c
+-2.18 0 -4.23 -0.68 -6.15 -2.05 c
+-1.92 -1.37 -3.4 -3.2 -4.46 -5.51 c
+-1.06 -2.3 -2.56 -7.48 -4.51 -15.52 c
+-1.95 -8.04 -3.58 -15.9 -4.91 -23.55 c
+2.7 0 p
+1.56 0 5.91 0.19 13.06 0.58 c
+7.15 0.39 11.82 0.82 14.01 1.29 c
+1.17 -1.87 p
+-1.63 -4.46 -2.77 -8.17 -3.4 -11.14 c
+-1.29 -1.17 p
+-2.74 0.16 -8.13 0.23 -16.17 0.23 c
+-6.49 0 -10.66 -0.08 -12.54 -0.23 c
+-9.14 -40.66 p
+-3.75 -16.72 -7.43 -31.49 -11.02 -44.3 c
+-4.77 -17.18 -9.44 -30.22 -14.01 -39.08 c
+-4.57 -8.87 -10.38 -16.84 -17.41 -23.9 c
+-7.03 -7.08 -13.35 -11.94 -18.98 -14.59 c
+-3.52 -1.64 -6.87 -2.46 -10.08 -2.46 c
+-2.82 0 -5.78 0.7 -8.91 2.11 c
+3.76 9.69 6.33 18.36 7.74 26.02 c
+3.76 0.7 p
+3.04 -7.11 6.94 -10.66 11.71 -10.66 c
+1.65 0 3.22 0.41 4.75 1.23 c
+1.52 0.82 2.94 2.17 4.28 4.04 c
+1.33 1.87 2.98 6.68 4.98 14.42 c
+1.99 7.74 4.39 19.02 7.2 33.86 c
+8.68 45.35 9.14 47.93 p
+-4.46 0.16 -8.01 0.23 -10.67 0.23 c
+-4.06 0 -7.66 -0.08 -10.78 -0.23 c
+-0.84 1.04 p f
+3390.77 5849.29 0.82 6.21 1.17 1.06 P
+6.09 1.49 9.77 2.62 11.02 3.4 c
+0.62 0.39 1.17 0.94 1.63 1.64 c
+0.46 0.7 1.12 2.72 1.94 6.03 c
+0.82 3.33 3.65 18.85 8.5 46.58 c
+9.03 52.26 p
+2.88 17.26 4.34 28.2 4.34 32.82 c
+0 1.95 -0.5 3.4 -1.47 4.34 c
+-0.98 0.94 -2.17 1.49 -3.57 1.64 c
+-1.4 0.15 -6.84 0.5 -16.3 1.06 c
+-0.82 0.94 0.94 6.45 1.05 0.94 p
+12.43 -0.54 29.14 -0.82 50.17 -0.82 c
+3.74 0 27.5 0.27 71.24 0.82 c
+1.17 -1.41 p
+-0.16 -1.87 -1.28 -8.51 -3.39 -19.92 c
+-1.1 -6.1 -1.95 -11.8 -2.58 -17.11 c
+-1.06 -0.94 -6.09 0 -0.94 0.94 p
+0.24 9.14 0.35 14.61 0.35 16.41 c
+0 2.34 -0.26 3.94 -0.82 4.81 c
+-0.54 0.86 -1.91 1.68 -4.1 2.46 c
+-2.18 0.78 -6.35 1.49 -12.49 2.11 c
+-6.14 0.62 -11.94 0.94 -17.41 0.94 c
+-8.59 0 -15.7 -0.47 -21.33 -1.41 c
+-7.26 -36.56 p
+-1.1 -5.47 -2.54 -13.48 -4.34 -24.02 c
+17.03 -0.39 27.82 -0.58 32.35 -0.58 c
+7.03 0 14.61 0.19 22.74 0.58 c
+0.7 -1.41 -3.06 -10.31 -1.41 -1.06 p
+-14.53 0.31 -29.06 0.66 -43.59 1.06 c
+-2.74 0 -5.94 -0.08 -9.6 -0.23 c
+-7.39 -41.95 p
+-2.18 -12.11 -3.5 -20.9 -3.98 -26.37 c
+19.45 0 p
+9.85 0 18.42 0.23 25.73 0.7 c
+7.3 0.47 12.29 1.1 14.94 1.87 c
+2.65 0.78 4.61 1.95 5.85 3.51 c
+1.26 1.56 2.78 5.74 4.57 12.54 c
+0.39 1.72 1.41 5.08 3.06 10.08 c
+0.94 0.94 6.9 0 0.83 -0.94 -7.86 -39.96 -1.29 -1.06 p
+-12.5 0.23 -21.06 0.35 -25.66 0.35 c
+-51.69 0.47 p
+-11.87 0 -25.58 -0.23 -41.13 -0.7 c
+-0.81 0.82 p f
+3600.05 5875.06 2.7 -4.57 -0.47 -1.52 P
+-17.35 -12.26 -28.32 -19.48 -32.94 -21.62 c
+-4.61 -2.16 -8.39 -3.22 -11.36 -3.22 c
+-3.36 0 -5.75 1.35 -7.16 4.05 c
+-1.4 2.7 -2.1 5.8 -2.1 9.31 c
+0 7.11 2.34 21.37 7.03 42.78 c
+16.29 74.42 p
+0.94 4.06 1.89 8.96 2.86 14.71 c
+0.98 5.74 1.46 9.31 1.46 10.72 c
+0 1.72 -0.49 3.11 -1.46 4.16 c
+-0.98 1.06 -2.82 1.62 -5.5 1.7 c
+-2.69 0.08 -6.66 0.16 -11.89 0.23 c
+-0.94 1.06 0.7 5.04 1.17 1.06 p
+17.03 2.11 32.92 5.78 47.69 11.02 c
+2.94 -2.58 p
+-6.65 -27.66 -13.17 -56.8 -19.58 -87.42 c
+-11.24 -53.09 p
+-1.02 -4.77 -1.53 -8.59 -1.53 -11.49 c
+0 -3.36 1.06 -5.04 3.17 -5.04 c
+3.04 0 9.33 3.48 18.86 10.43 c
+1.29 -0.14 p f
+3703.3 5875.89 2.7 -4.81 -0.36 -1.41 P
+-13.74 -9.77 -24.86 -16.46 -33.34 -20.1 c
+-8.48 -3.63 -15.96 -5.46 -22.44 -5.46 c
+-5.7 0 -11.06 1.21 -16.06 3.63 c
+-5 2.42 -8.57 5.92 -10.72 10.5 c
+-2.15 4.58 -3.22 9.39 -3.22 14.47 c
+0 8.44 1.62 19.26 4.86 32.46 c
+3.24 13.21 7.36 23.01 12.36 29.42 c
+5 6.41 13.11 12.82 24.32 19.22 c
+11.21 6.4 20.83 9.61 28.89 9.61 c
+6.79 0 12.34 -1.74 16.64 -5.21 c
+4.29 -3.48 6.44 -8.46 6.44 -14.94 c
+0 -7.97 -2.38 -15.18 -7.14 -21.62 c
+-4.77 -6.45 -12.68 -11.87 -23.74 -16.3 c
+-11.06 -4.41 -22.4 -7.59 -34.04 -9.54 c
+-0.86 -5.7 -1.29 -10.94 -1.29 -15.7 c
+0 -7.66 1.82 -12.87 5.45 -15.64 c
+3.63 -2.78 7.68 -4.17 12.13 -4.17 c
+3.2 0 6.87 0.6 11.02 1.82 c
+4.14 1.2 7.59 2.58 10.37 4.1 c
+2.78 1.53 8.07 4.78 15.87 9.78 c
+1.3 -0.13 h
+3649.4 5902.26 m
+16.24 3.59 27.18 9.17 32.81 16.7 c
+5.63 7.53 8.44 14.58 8.44 21.15 c
+0 3.75 -1.1 6.66 -3.27 8.74 c
+-2.19 2.06 -4.89 3.1 -8.1 3.1 c
+-6.41 0 -11.95 -3.38 -16.63 -10.14 c
+-4.7 -6.77 -9.11 -19.95 -13.25 -39.56 c
+f
+3813.93 5876.01 2.69 -4.92 -0.34 -1.41 P
+-13.37 -9.61 -24.34 -16.33 -32.94 -20.16 c
+-8.59 -3.83 -16.72 -5.74 -24.37 -5.74 c
+-6.1 0 -11.65 1.47 -16.65 4.4 c
+-5 2.93 -8.57 6.97 -10.72 12.13 c
+-2.15 5.16 -3.22 10.62 -3.22 16.41 c
+0 7.03 0.81 14.5 2.41 22.38 c
+1.6 7.89 3.63 14.75 6.1 20.56 c
+2.46 5.83 4.84 10.18 7.15 13.07 c
+2.31 2.9 5 5.47 8.09 7.74 c
+3.09 2.26 8.57 5.82 16.46 10.66 c
+5.7 3.67 9.61 6.06 11.73 7.15 c
+2.11 1.1 4.84 2.06 8.2 2.86 c
+3.35 0.83 6.94 1.23 10.78 1.23 c
+7.5 0 15.78 -1.91 24.84 -5.74 c
+0.35 -1.29 p
+-1.17 -2.82 -2.59 -7.75 -4.27 -14.82 c
+-1.68 -7.07 -2.79 -12.8 -3.34 -17.17 c
+-1.28 -1.06 -5.98 0 -0.82 1.06 p
+0.62 4.22 0.93 8.09 0.93 11.6 c
+0 0.7 -0.04 1.87 -0.12 3.51 c
+-6.72 5.86 -13.9 8.79 -21.55 8.79 c
+-5.55 0 -9.93 -1.03 -13.13 -3.1 c
+-3.21 -2.07 -5.88 -5.14 -8.03 -9.2 c
+-2.15 -4.06 -4.53 -11.54 -7.15 -22.44 c
+-2.62 -10.9 -3.92 -20.61 -3.92 -29.13 c
+0 -7.03 1.6 -12.7 4.8 -16.99 c
+3.2 -4.3 7.62 -6.45 13.24 -6.45 c
+4.62 0 9.75 1.04 15.42 3.11 c
+5.66 2.06 13.46 6.38 23.38 12.94 c
+1.28 0 0 0.01 p f
+3862.55 5946.55 -24.49 0 -0.83 1.17 0.7 4.1 1.41 1.41 P
+6.49 1.49 15.28 4.1 26.38 7.85 c
+0.15 1.8 0.7 5.58 1.64 11.37 c
+1.56 8.67 2.34 15.94 2.34 21.8 c
+4.7 1.02 11.77 3.24 21.21 6.68 c
+4.3 1.56 6.95 2.5 7.97 2.82 c
+2.7 -2.93 p
+-2.5 -7.66 -6.06 -21.56 -10.67 -41.72 c
+12.08 0 p
+9.38 0 15.98 0.31 19.81 0.94 c
+1.29 -1.87 p
+-1.1 -3.59 -2 -7.34 -2.7 -11.25 c
+-1.51 -1.17 p
+-5.78 0.54 -12.11 0.82 -18.99 0.82 c
+-12.54 0 p
+-1.33 -6.56 -2.89 -14.02 -4.69 -22.38 c
+-4.91 -22.97 -3.63 -17.82 p
+-0.94 -5 -1.5 -8.24 -1.7 -9.73 c
+-0.2 -1.49 -0.3 -2.82 -0.3 -3.98 c
+0 -2.03 0.53 -3.55 1.58 -4.57 c
+1.06 -1.02 2.37 -1.52 3.92 -1.52 c
+1.42 0 2.93 0.34 4.57 1 c
+1.64 0.66 3.87 1.87 6.69 3.63 c
+2.81 1.76 7.69 5.06 14.64 9.9 c
+1.64 -0.12 2.35 -4.57 -0.23 -1.41 p
+-17.98 -13.13 -29.79 -21.06 -35.46 -23.79 c
+-5.66 -2.74 -10.21 -4.1 -13.65 -4.1 c
+-4.53 0 -7.95 1.41 -10.26 4.22 c
+-2.3 2.81 -3.46 6.49 -3.46 11.02 c
+0 2.89 0.39 6.49 1.17 10.78 c
+0.79 4.3 2.97 14.61 6.56 30.94 c
+6.1 28.12 9.24 43.28 9.38 45.46 c
+f
+3932.86 5844.71 -2.46 2.93 P
+6.18 20.86 10.65 38.93 13.42 54.2 c
+2.78 15.27 4.17 26.03 4.17 32.28 c
+0 3.98 -0.9 5.98 -2.7 5.98 c
+-2.19 0 -7.5 -3.17 -15.94 -9.5 c
+-1.75 0.12 -2.23 3.86 0.13 1.64 p
+13.59 11.25 23.44 18.67 29.53 22.26 c
+6.09 3.59 10.58 5.39 13.48 5.39 c
+2.26 0 3.98 -0.87 5.15 -2.63 c
+1.17 -1.77 1.76 -3.85 1.76 -6.27 c
+0 -2.66 -0.3 -5.54 -0.94 -8.67 c
+-0.62 -3.13 -3.59 -15.98 -8.9 -38.55 c
+1.63 0 p
+3.67 8.59 7.58 16.72 11.73 24.38 c
+4.14 7.66 8.2 13.92 12.18 18.82 c
+3.99 4.87 7.46 8.1 10.43 9.66 c
+2.97 1.56 6.14 2.34 9.5 2.34 c
+2.1 0 4.14 -0.27 6.1 -0.82 c
+0.82 -1.17 p
+-1.17 -3.59 -2.26 -8.79 -3.27 -15.58 c
+-1.02 -6.8 -1.53 -12.18 -1.53 -16.17 c
+-2.7 -1.76 p
+-3.67 3.36 -7.78 5.04 -12.3 5.04 c
+-3.83 0 -7.44 -1.29 -10.83 -3.86 c
+-3.39 -2.58 -7.17 -7.85 -11.3 -15.82 c
+-4.15 -7.97 -7.74 -17.48 -10.79 -28.54 c
+-3.04 -11.05 -5.27 -22.55 -6.67 -34.5 c
+-4.07 -0.7 -8.5 -1.38 -13.3 -2.05 c
+-4.8 -0.66 -8.96 -1.67 -12.4 -3 c
+f
+4024.16 5881.98 m
+0 7.26 1.22 16.39 3.69 27.37 c
+2.46 10.98 6.68 20.15 12.66 27.54 c
+5.98 7.38 14.05 13.7 24.2 18.98 c
+10.16 5.26 20.62 7.9 31.41 7.9 c
+11.09 0 20.11 -3.17 27.06 -9.5 c
+6.96 -6.33 10.44 -15.82 10.44 -28.48 c
+0 -11.49 -2.16 -23.22 -6.46 -35.22 c
+-4.3 -11.98 -10.02 -20.76 -17.17 -26.3 c
+-7.15 -5.54 -14.65 -10.29 -22.5 -14.23 c
+-7.86 -3.94 -16.78 -5.92 -26.78 -5.92 c
+-9.53 0 -16.95 1.83 -22.26 5.5 c
+-5.32 3.67 -9.02 8.4 -11.14 14.18 c
+-2.1 5.79 -3.14 11.85 -3.14 18.18 c
+h
+4051.81 5882.92 m
+0 -9.53 1.79 -16.45 5.39 -20.74 c
+3.59 -4.3 8.75 -6.45 15.47 -6.45 c
+4.61 0 8.73 1.29 12.36 3.86 c
+3.63 2.58 6.99 7.21 10.08 13.89 c
+3.09 6.68 5.58 14.98 7.5 24.9 c
+1.92 9.92 2.87 18.94 2.87 27.07 c
+0 10.23 -2 17.38 -5.98 21.45 c
+-3.98 4.06 -8.83 6.1 -14.53 6.1 c
+-6.02 0 -11.3 -2.3 -15.87 -6.91 c
+-4.57 -4.61 -8.59 -13.61 -12.07 -27.01 c
+-3.49 -13.4 -5.22 -25.45 -5.22 -36.15 c
+f
+4156.12 5844.83 -3.05 2.93 P
+2.42 6.1 5.54 16.26 9.38 30.52 c
+3.83 14.26 6.62 26.66 8.38 37.21 c
+1.76 10.54 2.64 17.26 2.64 20.16 c
+0 2.66 -0.9 3.98 -2.7 3.98 c
+-2.42 0 -8.05 -3.28 -16.87 -9.84 c
+-1.64 0.12 -2.34 4.1 0.12 1.52 p
+4.06 3.44 8.78 7.25 14.17 11.43 c
+5.39 4.17 10.27 7.66 14.66 10.42 c
+4.38 2.78 7.65 4.54 9.84 5.28 c
+2.18 0.74 4.17 1.11 5.97 1.11 c
+4.3 0 6.46 -2.54 6.46 -7.62 c
+0 -3.67 -0.7 -9.01 -2.12 -15.99 c
+-1.4 -6.99 -4.34 -18.89 -8.79 -35.69 c
+8.83 16.33 19.94 30.27 33.34 41.83 c
+13.4 11.56 24.28 17.34 32.64 17.34 c
+6.64 0 9.95 -3.71 9.95 -11.14 c
+0 -4.06 -0.89 -9.86 -2.69 -17.41 c
+-1.8 -7.53 -4.69 -18.61 -8.67 -33.22 c
+-2.66 -9.69 -4.48 -17.25 -5.46 -22.67 c
+-0.98 -5.44 -1.47 -8.93 -1.47 -10.5 c
+0 -2.89 0.94 -4.34 2.82 -4.34 c
+3.05 0 8.8 3.2 17.23 9.61 c
+1.41 -0.12 2.58 -4.57 -0.36 -1.52 p
+-13.36 -10.08 -22.93 -16.54 -28.7 -19.39 c
+-5.78 -2.85 -10.75 -4.28 -14.89 -4.28 c
+-3.28 0 -5.49 1.26 -6.62 3.82 c
+-1.14 2.54 -1.7 5.17 -1.7 7.9 c
+0 6.33 2.74 19.22 8.2 38.67 c
+6.01 21.1 9.02 34.57 9.02 40.43 c
+0 3.2 -1.51 4.81 -4.56 4.81 c
+-1.41 0 -3.34 -0.62 -5.81 -1.87 c
+-2.46 -1.25 -6.06 -4.32 -10.78 -9.19 c
+-4.73 -4.89 -9.06 -10.42 -13.01 -16.58 c
+-3.94 -6.17 -7.38 -12.85 -10.31 -20.04 c
+-2.93 -7.19 -5.38 -14.9 -7.33 -23.14 c
+-1.95 -8.25 -3.16 -14.79 -3.62 -19.63 c
+-9.92 -0.79 -18.34 -2.27 -25.3 -4.46 c
+f
+4288.53 5928.74 -2.34 4.1 0.23 1.52 P
+13.74 10.7 24.47 18.28 32.17 22.74 c
+7.7 4.46 13.7 6.68 17.99 6.68 c
+1.95 0 3.62 -0.83 5.03 -2.51 c
+1.41 -1.68 2.11 -3.82 2.11 -6.39 c
+0 -3.44 -0.6 -7.78 -1.82 -13.01 c
+-1.22 -5.23 -3.78 -15.16 -7.68 -29.77 c
+-6.79 -25.16 -10.19 -39.73 -10.19 -43.71 c
+0 -1.1 0.34 -2.05 1 -2.86 c
+0.66 -0.82 1.42 -1.23 2.28 -1.23 c
+2.34 0 8.59 3.63 18.75 10.9 c
+1.41 -0.12 2.58 -4.69 -0.47 -1.52 p
+-5.47 -3.9 -11.98 -8.38 -19.56 -13.42 c
+-7.58 -5.04 -12.99 -8.18 -16.23 -9.44 c
+-3.24 -1.26 -6.08 -1.87 -8.5 -1.87 c
+-3.05 0 -5.31 1.14 -6.8 3.4 c
+-1.49 2.26 -2.22 5.19 -2.22 8.79 c
+0 3.6 0.45 7.68 1.34 12.24 c
+0.9 4.58 2.83 12.49 5.8 23.74 c
+6.56 25.08 9.84 39.84 9.84 44.3 c
+0 2.18 -0.89 3.28 -2.69 3.28 c
+-2.97 0 -9.77 -3.75 -20.39 -11.25 c
+-1.64 0.11 h
+4325.33 5999.75 m
+0 4.84 1.51 8.98 4.57 12.42 c
+3.04 3.44 6.94 5.16 11.71 5.16 c
+4.06 0 7.26 -1.22 9.61 -3.7 c
+2.34 -2.46 3.51 -5.64 3.51 -9.54 c
+0 -4.77 -1.41 -9.08 -4.22 -12.95 c
+-2.82 -3.86 -6.75 -5.8 -11.83 -5.8 c
+-4.77 0 -8.18 1.37 -10.26 4.1 c
+-2.07 2.74 -3.1 6.17 -3.1 10.3 c
+f
+4454.12 5876.01 2.7 -4.92 -0.36 -1.41 P
+-13.36 -9.61 -24.33 -16.33 -32.92 -20.16 c
+-8.6 -3.83 -16.72 -5.74 -24.38 -5.74 c
+-6.1 0 -11.64 1.47 -16.64 4.4 c
+-5 2.93 -8.58 6.97 -10.73 12.13 c
+-2.15 5.16 -3.22 10.62 -3.22 16.41 c
+0 7.03 0.81 14.5 2.41 22.38 c
+1.6 7.89 3.63 14.75 6.1 20.56 c
+2.46 5.83 4.84 10.18 7.15 13.07 c
+2.31 2.9 5 5.47 8.09 7.74 c
+3.09 2.26 8.57 5.82 16.47 10.66 c
+5.7 3.67 9.61 6.06 11.72 7.15 c
+2.11 1.1 4.84 2.06 8.2 2.86 c
+3.36 0.83 6.94 1.23 10.78 1.23 c
+7.5 0 15.78 -1.91 24.84 -5.74 c
+0.34 -1.29 p
+-1.17 -2.82 -2.59 -7.75 -4.27 -14.82 c
+-1.68 -7.07 -2.79 -12.8 -3.34 -17.17 c
+-1.3 -1.06 -5.97 0 -0.83 1.06 p
+0.62 4.22 0.94 8.09 0.94 11.6 c
+0 0.7 -0.04 1.87 -0.12 3.51 c
+-6.72 5.86 -13.91 8.79 -21.56 8.79 c
+-5.55 0 -9.92 -1.03 -13.13 -3.1 c
+-3.21 -2.07 -5.88 -5.14 -8.03 -9.2 c
+-2.15 -4.06 -4.53 -11.54 -7.15 -22.44 c
+-2.62 -10.9 -3.93 -20.61 -3.93 -29.13 c
+0 -7.03 1.61 -12.7 4.82 -16.99 c
+3.19 -4.3 7.61 -6.45 13.23 -6.45 c
+4.61 0 9.75 1.04 15.42 3.11 c
+5.66 2.06 13.46 6.38 23.38 12.94 c
+1.27 0 0 0.01 p f
+4477.79 5883.74 5.28 0 1.05 -1.06 0.36 -10.43 P
+3.05 -3.75 7.28 -7.01 12.71 -9.78 c
+5.43 -2.78 11.15 -4.17 17.17 -4.17 c
+4.22 0 8.07 0.65 11.54 1.94 c
+3.48 1.28 6.07 3.5 7.8 6.62 c
+1.71 3.13 2.58 6.33 2.58 9.61 c
+0 2.97 -0.73 5.54 -2.17 7.74 c
+-1.44 2.19 -3.38 3.93 -5.8 5.22 c
+-2.43 1.29 -6.33 2.51 -11.72 3.69 c
+-7.89 1.8 -13.46 3.18 -16.7 4.17 c
+-3.24 0.98 -6.14 2.48 -8.67 4.5 c
+-2.54 2.02 -4.65 4.84 -6.33 8.44 c
+-1.68 3.6 -2.51 7.5 -2.51 11.72 c
+0 4.22 0.8 8.26 2.4 12.14 c
+1.6 3.86 3.86 7.18 6.8 9.95 c
+2.93 2.78 7.67 6.19 14.24 10.26 c
+6.56 4.06 11.6 6.66 15.11 7.8 c
+3.51 1.14 7.82 1.7 12.89 1.7 c
+10.54 0 20.28 -2.5 29.18 -7.5 c
+-1.56 -7.5 -2.94 -16.64 -4.11 -27.42 c
+-1.05 -0.94 -5.16 0 -1.06 0.94 -1.28 10.78 p
+-3.51 3.44 -7.72 6.1 -12.6 7.97 c
+-4.88 1.87 -9.59 2.82 -14.12 2.82 c
+-5.48 0 -10.05 -1.58 -13.71 -4.75 c
+-3.68 -3.16 -5.5 -7.24 -5.5 -12.24 c
+0 -5.39 1.83 -9.27 5.5 -11.66 c
+3.66 -2.38 10.78 -4.58 21.32 -6.62 c
+7.34 -1.41 12.8 -2.95 16.35 -4.62 c
+3.55 -1.68 6.5 -4.48 8.85 -8.38 c
+2.34 -3.9 3.51 -8.44 3.51 -13.59 c
+0 -5.39 -1.14 -10.17 -3.41 -14.35 c
+-2.26 -4.18 -6.87 -8.99 -13.83 -14.42 c
+-6.95 -5.44 -13.05 -9.24 -18.28 -11.43 c
+-5.23 -2.19 -12.03 -3.28 -20.39 -3.28 c
+-4.22 0 -8.51 0.31 -12.89 0.94 c
+-4.38 0.62 -10.54 2.5 -18.5 5.62 c
+-0.48 1.17 p
+0.78 2.66 1.7 7.5 2.76 14.53 c
+1.06 7.02 1.66 12.15 1.82 15.35 c
+1.06 1.07 p f
+cleartomark end end pagesave restore showpage
+%%PageTrailer
+%%Trailer
+%%Pages: 1
+%COMMENT
+%</logo>
+% \fi
+\endinput

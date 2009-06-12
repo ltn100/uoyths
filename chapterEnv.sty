@@ -1,0 +1,376 @@
+%%
+%% This is file `chapterEnv.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% chapterEnv.dtx  (with options: `package')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright (C) 2004 by Lee Netherton <ltn100@users.sourceforge.net>
+%% 
+%% This file may be distributed and/or modified under the conditions of
+%% the LaTeX Project Public License, either version 1.2 of this license
+%% or (at your option) any later version.  The latest version of this
+%% license is in:
+%% 
+%%    http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.2 or later is part of all distributions of LaTeX
+%% version 1999/12/01 or later.
+%% 
+%% The most up-to-date version of this package can be found at:
+%% 
+%%     http://sourceforge.net/projects/chapterenv/
+%% 
+\def\datelastmodified/{2005/05/02}%
+\def\versionnumber/{v0.1}%
+\def\filedescription/{Provides Chapter and Section Environments}%
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]%
+\ProvidesPackage{chapterEnv}[\datelastmodified/ \versionnumber/ \filedescription/]
+\newif\if@book\@bookfalse%
+\newif\if@article\@articlefalse%
+\newif\if@report\@reportfalse%
+\@ifundefined{@mainmatter}%
+{%
+    \@ifundefined{chapter}%
+    {%
+        %We are in an article class
+        \@articletrue%
+    }%
+    {%
+        %We are in a report class
+        \@reporttrue%
+    }%
+}%
+{%
+    %We are in a book class
+    \@booktrue%
+}%
+\def\inc@startOfPart{}%
+\def\inc@startOfChapter{}%
+\def\inc@startOfSection{}%
+\def\inc@startOfSubSection{}%
+\def\inc@startOfSubSubSection{}%
+\def\inc@startOfFrontMatter{}%
+\def\inc@startOfMainMatter{}%
+\def\inc@startOfBackMatter{}%
+\def\inc@endOfPart{}%
+\def\inc@endOfChapter{}%
+\def\inc@endOfSection{}%
+\def\inc@endOfSubSection{}%
+\def\inc@endOfSubSubSection{}%
+\def\inc@endOfFrontMatter{}%
+\def\inc@endOfMainMatter{}%
+\def\inc@endOfBackMatter{}%
+\def\snd@frontMatter{-1}%
+\def\snd@mainMatter{2}%
+\def\snd@backMatter{2}%
+\def\env@label{}%
+\newif\if@addToPartEnv\@addToPartEnvtrue%
+\newif\if@addToChapterEnv\@addToChapterEnvtrue%
+\newif\if@addToSectionEnv\@addToSectionEnvtrue%
+\newif\if@addToSubSectionEnv\@addToSubSectionEnvtrue%
+\newif\if@addToSubSubSectionEnv\@addToSubSubSectionEnvtrue%
+\newif\if@addToFrontMatterEnv\@addToFrontMatterEnvtrue%
+\newif\if@addToMainMatterEnv\@addToMainMatterEnvtrue%
+\newif\if@addToBackMatterEnv\@addToBackMatterEnvtrue%
+\newcommand{\stopAddingToEnv}%
+{%
+    \@addToPartEnvfalse%
+    \@addToChapterEnvfalse%
+    \@addToSectionEnvfalse%
+    \@addToSubSectionEnvfalse%
+    \@addToSubSubSectionEnvfalse%
+    \@addToFrontMatterEnvfalse%
+    \@addToMainMatterEnvfalse%
+    \@addToBackMatterEnvfalse%
+}%
+\newcommand{\startAddingToEnv}%
+{%
+    \@addToPartEnvtrue%
+    \@addToChapterEnvtrue%
+    \@addToSectionEnvtrue%
+    \@addToSubSectionEnvtrue%
+    \@addToSubSubSectionEnvtrue%
+    \@addToFrontMatterEnvtrue%
+    \@addToMainMatterEnvtrue%
+    \@addToBackMatterEnvtrue%
+}%
+\newcommand{\envLabel}{\env@label}%
+\newcommand{\addToStartOfPart}[1]%
+{%
+    \def\inc@startOfPart{#1}%
+}%
+\newcommand{\addToEndOfPart}[1]%
+{%
+    \def\inc@endOfPart{#1}%
+}%
+\newcommand{\addToStartOfChapter}[1]%
+{%
+    \def\inc@startOfChapter{#1}%
+}%
+\newcommand{\addToEndOfChapter}[1]%
+{%
+    \def\inc@endOfChapter{#1}%
+}%
+\newcommand{\addToStartOfSection}[1]%
+{%
+    \def\inc@startOfSection{#1}%
+}%
+\newcommand{\addToStartOfSubSection}[1]%
+{%
+    \def\inc@startOfSubSection{#1}%
+}%
+\newcommand{\addToStartOfSubSubSection}[1]%
+{%
+    \def\inc@startOfSubSubSection{#1}%
+}%
+\newcommand{\addToEndOfSection}[1]%
+{%
+    \def\inc@endOfSection{#1}%
+}%
+\newcommand{\addToEndOfSubSection}[1]%
+{%
+    \def\inc@endOfSubSection{#1}%
+}%
+\newcommand{\addToEndOfSubSubSection}[1]%
+{%
+    \def\inc@endOfSubSubSection{#1}%
+}%
+\newcommand{\addToStartOfFrontMatter}[1]%
+{%
+    \def\inc@startOfFrontMatter{#1}%
+}%
+\newcommand{\addToStartOfMainMatter}[1]%
+{%
+    \def\inc@startOfMainMatter{#1}%
+}%
+\newcommand{\addToStartOfBackMatter}[1]%
+{%
+    \def\inc@startOfBackMatter{#1}%
+}%
+\newcommand{\addToEndOfFrontMatter}[1]%
+{%
+    \def\inc@endOfFrontMatter{#1}%
+}%
+\newcommand{\addToEndOfMainMatter}[1]%
+{%
+    \def\inc@endOfMainMatter{#1}%
+}%
+\newcommand{\addToEndOfBackMatter}[1]%
+{%
+    \def\inc@endOfBackMatter{#1}%
+}%
+\newenvironment{partEnv}[2][]%
+{%
+    \part{#2}%
+    \ifthenelse{\equal{#1}{}}{}{\label{#1}}%
+    \def\env@label{#1}%
+    \if@addToPartEnv%
+        \inc@startOfPart%
+    \fi%
+}%
+{%
+    \if@addToPartEnv%
+        \inc@endOfPart%
+    \fi
+}%
+\newenvironment{partEnv*}[1]%
+{%
+    \part*{#1}%
+    \if@addToPartEnv%
+        \inc@startOfPart%
+    \fi%
+}%
+{%
+    \if@addToPartEnv%
+        \inc@endOfPart%
+    \fi%
+}%
+
+\newenvironment{chapterEnv}[2][]%
+{%
+    \chapter{#2}%
+    \ifthenelse{\equal{#1}{}}{}{\label{#1}}%
+    \def\env@label{#1}%
+    \if@addToChapterEnv%
+        \inc@startOfChapter%
+    \fi%
+}%
+{%
+    \if@addToChapterEnv%
+        \inc@endOfChapter%
+    \fi%
+}%
+\newenvironment{chapterEnv*}[1]%
+{%
+    \chapter*{#1}%
+    \if@addToChapterEnv%
+        \inc@startOfChapter%
+    \fi%
+}%
+{%
+    \if@addToChapterEnv%
+        \inc@endOfChapter%
+    \fi%
+}%
+\newenvironment{sectionEnv}[2][]%
+{%
+    \section{#2}%
+    \ifthenelse{\equal{#1}{}}{}{\label{#1}}%
+    \def\env@label{#1}%
+    \if@addToSectionEnv%
+        \inc@startOfSection%
+    \fi%
+}%
+{%
+    \if@addToSectionEnv%
+        \inc@endOfSection%
+    \fi%
+}%
+\newenvironment{subSectionEnv}[2][]%
+{%
+    \subsection{#2}%
+    \ifthenelse{\equal{#1}{}}{}{\label{#1}}%
+    \def\env@label{#1}%
+    \if@addToSubSectionEnv%
+        \inc@startOfSubSection%
+    \fi%
+}%
+{%
+    \if@addToSubSectionEnv%
+        \inc@endOfSubSection%
+    \fi%
+}%
+\newenvironment{subSubSectionEnv}[2][]%
+{%
+    \subsubsection{#2}%
+    \ifthenelse{\equal{#1}{}}{}{\label{#1}}%
+    \def\env@label{#1}%
+    \if@addToSubSubSectionEnv%
+        \inc@startOfSubSubSection%
+    \fi%
+}%
+{%
+    \if@addToSubSubSectionEnv%
+        \inc@endOfSubSubSection%
+    \fi%
+}%
+\newenvironment{sectionEnv*}[1]%
+{%
+    \section*{#1}%
+    \if@addToSectionEnv%
+        \inc@startOfSection%
+    \fi%
+}%
+{%
+    \if@addToSectionEnv%
+        \inc@endOfSection%
+    \fi%
+}%
+\newenvironment{subSectionEnv*}[1]%
+{%
+    \subsection*{#1}%
+    \if@addToSubSectionEnv%
+        \inc@startOfSubSection%
+    \fi%
+}%
+{%
+    \if@addToSubSectionEnv%
+        \inc@endOfSubSection%
+    \fi%
+}%
+\newenvironment{subSubSectionEnv*}[1]%
+{%
+    \subsubsection*{#1}%
+    \if@addToSubSubSectionEnv%
+        \inc@startOfSubSubSection%
+    \fi%
+}%
+{%
+    \if@addToSubSubSectionEnv%
+        \inc@endOfSubSubSection%
+    \fi%
+}%
+\newenvironment{frontMatterEnv}[1][]%
+{%
+    \if@book%
+         \frontmatter%
+    \else%
+        \newcounter{temp@FMsnd}%
+        \setcounter{temp@FMsnd}{\value{secnumdepth}}%
+        \setcounter{secnumdepth}{\snd@frontMatter}%
+    \fi%
+    \ifthenelse{\equal{#1}{}}%
+        {}%
+        {\pagenumbering{#1}}%
+    \if@addToFrontMatterEnv%
+        \inc@startOfFrontMatter%
+    \fi%
+}%
+{%
+    \if@addToFrontMatterEnv%
+        \inc@endOfFrontMatter%
+    \fi%
+    \if@book%
+        \@mainmattertrue%
+    \else%
+        \setcounter{secnumdepth}{\value{temp@FMsnd}}%
+    \fi%
+}%
+\newenvironment{mainMatterEnv}[1][]%
+{%
+    \if@book%
+         \mainmatter%
+    \else%
+        \newcounter{temp@MMsnd}%
+        \setcounter{temp@MMsnd}{\value{secnumdepth}}%
+        \setcounter{secnumdepth}{\snd@mainMatter}%
+    \fi%
+    \ifthenelse{\equal{#1}{}}%
+        {}%
+        {\pagenumbering{#1}}%
+    \if@addToMainMatterEnv%
+        \inc@startOfMainMatter%
+    \fi%
+}%
+{%
+    \if@addToMainMatterEnv%
+        \inc@endOfMainMatter%
+    \fi%
+    \if@book%
+    \else%
+        \setcounter{secnumdepth}{\value{temp@MMsnd}}%
+    \fi%
+}%
+\newenvironment{backMatterEnv}[1][]%
+{%
+    \appendix%
+    \if@book%
+         \backmatter%
+    \else%
+        \newcounter{temp@BMsnd}%
+        \setcounter{temp@BMsnd}{\value{secnumdepth}}%
+        \setcounter{secnumdepth}{\snd@backMatter}%
+    \fi%
+    \ifthenelse{\equal{#1}{}}%
+        {}%
+        {\pagenumbering{#1}}%
+    \if@addToBackMatterEnv%
+        \inc@startOfBackMatter%
+    \fi%
+}%
+{%
+    \if@addToBackMatterEnv%
+        \inc@endOfBackMatter%
+    \fi%
+    \if@book%
+    \else%
+        \setcounter{secnumdepth}{\value{temp@BMsnd}}%
+    \fi%
+}%
+\endinput
+%%
+%% End of file `chapterEnv.sty'.

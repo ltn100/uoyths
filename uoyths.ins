@@ -1,0 +1,126 @@
+%%------------------------Standard Spiel-------------------------------
+%% Copyright (C) 2005 by Lee Netherton <ltn100@ohm.york.ac.uk>
+%% --------------------------------------------------------------------
+%%
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.2
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in:
+%%
+%%    http://www.latex-project.org/lppl.txt
+%%
+%% and version 1.2 or later is part of all distributions of LaTeX
+%% version 1999/12/01 or later.
+%%---------------------------------------------------------------------
+
+\input{docstrip.tex}%
+\keepsilent%
+
+%% Preamble to be inserted at the top of every generated file
+\usedir{tex/latex/uoyths}%
+
+%% Preamble to be inserted at the top of every generated file
+\preamble%
+
+This is a generated file.
+
+Copyright (C) 2005 by Lee Netherton <ltn100@ohm.york.ac.uk>
+
+This file may be distributed and/or modified under the conditions of
+the LaTeX Project Public License, either version 1.2 of this license
+or (at your option) any later version.  The latest version of this
+license is in:
+
+http://www.latex-project.org/lppl.txt
+
+and version 1.2 or later is part of all distributions of LaTeX version
+1999/12/01 or later.
+
+\endpreamble%
+
+%% Generate the class file
+\askforoverwritefalse%
+\generate{\file{uoyths.cls}{\from{uoyths.dtx}{class}}}%
+\nopreamble\nopostamble\generate{\file{COMPILE.bat}{\from{uoyths.dtx}{comp}}}%
+\nopreamble\nopostamble\generate{\file{comp_bibunit.bat}{\from{uoyths.dtx}{compbibunit}}}%
+%% Example Files
+\nopreamble\nopostamble\generate{\file{example.tex}{\from{uoyths.dtx}{exampletex}}}%
+\nopreamble\nopostamble\generate{\file{example.bib}{\from{uoyths.dtx}{examplebib}}}%
+\nopreamble\nopostamble\generate{\file{lorem.tex}{\from{uoyths.dtx}{lorem}}}%
+%% Logo
+\nopreamble\nopostamble\generate{\file{uoyths_logo.eps}{\from{uoyths.dtx}{logo}}}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Make thesis.bst
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\MBopts{
+    \from{merlin.mbs}{%
+        %%%%%%%%%%%%%%%%%%%%%
+        % General options
+        %%%%%%%%%%%%%%%%%%%%%
+        ay,%:       Author-year with some non-standard interface
+        nat,%:      Natbib for use with natbib v5.3 or later
+        qt-s,%:     Use single quotes
+        qx,%:       , or . OUTSIDE quotes in title: `example'.
+        pp,%:       `Page' abbreviated as p. or pp.
+        blk-com,%:  Use commas after each logical section
+        and-xcom,%: No comma before `and' as `Tom, Dick and Harry'
+        amper,%:    Use '&' instead of 'and'
+        nfss,%:     Use LaTeX commands which may not work with Plain TeX
+        %%%%%%%%%%%%%%%%%%%%%
+        % Names
+        %%%%%%%%%%%%%%%%%%%%%
+        nm-rev,%:   Surname + initials (Smith, J. F.)
+        ed-rev,%:   Editor names reversed just like authors'
+        jnrlst,%:   Junior comes last as Smith, John, Jr.
+        ed,%:       `Editor' abbreviated as ed. or eds.
+        %%%%%%%%%%%%%%%%%%%%%
+        % Date
+        %%%%%%%%%%%%%%%%%%%%%
+        dt-beg,%:   Date after authors
+        yr-par,%:   Year in parentheses as (1993)
+        note-yr,%:  Year text full as 1990--1993 or `in press'
+        %%%%%%%%%%%%%%%%%%%%%
+        % Articles
+        %%%%%%%%%%%%%%%%%%%%%
+        vol-bf,%:   Volume bold as {\bf vol}(num)
+        volp-com,%: Comma after: vol(num), pp
+        tit-qq,%:   Article title in quotes
+        jwdpg,%:    Include 'pp.' for pages
+        %%%%%%%%%%%%%%%%%%%%%
+        % Books
+        %%%%%%%%%%%%%%%%%%%%%
+        bt-rm,%:    Book titles in normal font
+        btit-rm,%:  Book titles in normal font (dunno what the difference is?!)
+        btit-qq,
+        %%%%%%%%%%%%%%%%%%%%%
+        % Tech. Reports
+        %%%%%%%%%%%%%%%%%%%%%
+        trnum-it,%: Tech. report and number italic as `{\it Tech. Rep. 123'}
+        %%%%%%%%%%%%%%%%%%%%%
+        % Additional Fields
+        %%%%%%%%%%%%%%%%%%%%%
+        isbn,%:     Include ISBN for books, booklets, etc.
+        issn,%:     Include ISSN for periodicals
+        bt-qq,%:    Book title in quotes
+    }%
+}%
+\generate{\file{uoyths.bst}{\MBopts}}
+
+%% Display message to user, telling them how to install
+\obeyspaces
+\Msg{*************************************************************}%
+\Msg{*                                                           *}%
+\Msg{* To finish the installation you have to move the following *}%
+\Msg{* file into a directory searched by TeX:                    *}%
+\Msg{*                                                           *}%
+\Msg{*     uoyths.cls                                            *}%
+\Msg{*                                                           *}%
+\Msg{* To produce the documentation run the file uoyths.dtx      *}%
+\Msg{* through LaTeX.                                            *}%
+\Msg{*                                                           *}%
+\Msg{* Happy TeXing!                                             *}%
+\Msg{*                                                           *}%
+\Msg{*************************************************************}%
+
+\endbatchfile
